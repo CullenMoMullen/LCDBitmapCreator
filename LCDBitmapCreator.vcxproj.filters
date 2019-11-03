@@ -1,0 +1,205 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="LCDBitmapCreator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LCDBitmapCreatorDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiSelectFileList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="types.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="components\runtime\runtime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="components\lru\lru.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="components\handlealloc\handlealloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="components\gfx\gfx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="os\filesystem\fsapi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="os\os_resource_api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="os\filesystem\os_filesystem_errordefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdbool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="components\lru\lru_errordefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="components\middleware_errordefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="components\middleware_subgroups.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="groups.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="components\gfx\gfx_format.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="components\gfx\gfx_rsrcfont.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="components\gfx\gfx_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="os\errordefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="os\os_errordefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="os\os_subgroups.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="os\filesystem\filesystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="os\filesystem\fsproj.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="drivers\media\ddi_media.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="drivers\media\ddi_media_errordefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="drivers\ddi_errordefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="drivers\ddi_subgroups.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="drivers\media\drive_tags.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CMyStatic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CBitmapCreatorProperties.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="LCDBitmapCreator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LCDBitmapCreatorDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stubs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\gfx\gfx_stretchblt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\gfx\gfx_1bpp_ideal.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\gfx\gfx_1bpp_vertical.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\gfx\gfx_8bpp_palette.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\gfx\gfx_16bpp_565.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\gfx\gfx_18bpp_666.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\gfx\gfx_24bpp_888.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\gfx\gfx_32bpp_8888.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\gfx\gfx_alphablend.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\gfx\gfx_bitblt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\gfx\gfx_format.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\gfx\gfx_format_setup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\gfx\gfx_primatives.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="components\runtime\rt_stubs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CMyStatic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CBitmapCreatorProperties.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LCDBitmapCreator.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\LCDBitmapCreator.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="LCDBitmapCreator.aps" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\LCDBitmapCreator.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
