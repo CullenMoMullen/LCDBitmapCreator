@@ -1,6 +1,6 @@
 
 
-
+#include "pch.h"
 
 #include "CBitmapCreatorProperties.h"
 CBitmapCreatorProperties::~CBitmapCreatorProperties()

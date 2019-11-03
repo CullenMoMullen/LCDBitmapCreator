@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <assert.h>
+
 //! \brief TBD
 //! \todo [PUBS] Add definition(s)...
 //! \todo Where does this really go?
@@ -24,6 +25,7 @@ typedef struct _uint128_t_
 	uint32_t val[4];
 } uint128_t;
 #endif
+
 //! \brief TBD
 #ifndef RETCODE
 #define RETCODE int32_t

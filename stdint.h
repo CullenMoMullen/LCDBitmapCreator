@@ -13,7 +13,7 @@ typedef unsigned char uint8_t;
 typedef char int8_t;
 
 #else
-#pragma error Shouldn't be included from a non-windows file
+#pragma error "Should not be included from a non-windows file"
 #endif
 
 

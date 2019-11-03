@@ -10,7 +10,7 @@ typedef uint8_t bool;
 #endif
 
 #else
-#pragma error Shouldn't be included from a non-windows file
+#pragma error "Shouldn't be included from a non-windows file"
 #endif
 
 #endif //__STDINT_H

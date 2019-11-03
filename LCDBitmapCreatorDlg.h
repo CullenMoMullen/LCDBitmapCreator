@@ -62,6 +62,7 @@ public:
 	CListCtrl FilesToGenerateListCtrl;
 	MultiSelectFileList<MAX_PATH * MAX_IMAGE_STREAMS> MultiFileList;
 	CImage CurrentImg;
+	BOOL includedAlready = false;
 
 	gfx_BitmapTypeEnum_t getBmpTypeFromProp(CString& prop);
 	CString getBmpPropStrFromEnum(gfx_BitmapTypeEnum_t type);

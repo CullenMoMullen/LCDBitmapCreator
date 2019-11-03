@@ -383,8 +383,8 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 	}
 
 
-
-
+	//assume we are starting a new file even if it is a single file
+	includedAlready = false;
 	while (numFiles > 0) {
 		numFiles--;
 		
@@ -413,6 +413,21 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 				
 				// Launch the Open File dialog.
 				BOOL result = GetSaveFileName(&ofn);
+				// Check for errors.
+				if (CommDlgExtendedError() != 0)
+				{
+					// NOTE: For mult-selection, CommDlgExtendedError can return FNERR_BUFFERTOOSMALL even when
+					// GetOpenFileName returns TRUE.
+					MessageBox(NULL, TEXT("Could not open files."), MB_OK | MB_ICONERROR);
+					return;
+				}
+				else if (!result)
+				{
+					// The user cancelled. (No error occurred.)
+					return;
+				}
+				
+				
 				if (!result) {
 					return;
 				}
@@ -619,13 +634,20 @@ bool CLCDBitmapCreatorDlg::WriteBitmapToCFile(CString& InputFilename, CString& O
 
 	fwprintf(pFile, L"// %s (%d,%d)\n", InputFilename.GetString(), pBitmap->uWidth, pBitmap->uHeight);
 	if (!ArrayName.IsEmpty()) {
-		fwprintf(pFile, L"// %s\n", InputFilename.GetString());
-		fwprintf(pFile, L"#include <types.h>\n");
+		//fwprintf(pFile, L"// %s\n", InputFilename.GetString());
+		if ((singleOutputFile == false) || 
+			((singleOutputFile == true) && 
+			 (false == includedAlready))
+		) {
+			includedAlready = true;
+			fwprintf(pFile, L"#include <types.h>\n");
+		}
 		if (bConst)
 			fwprintf(pFile, L"const gfx_Bitmap_t %s = {\n", ArrayName.GetString());
 		else
 			fwprintf(pFile, L"gfx_Bitmap_t %s = {\n", ArrayName.GetString());
 	}
+
 	fwprintf(pFile, L"{\n");
 	int iSize = 0;
 
