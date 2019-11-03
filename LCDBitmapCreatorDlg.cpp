@@ -114,6 +114,14 @@ BOOL CLCDBitmapCreatorDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 	
+	//Initialize the bitmap type mapping:
+	bmpTypesMap.Add(TEXT("BITMAP_1BPP_IDEAL"), BITMAP_TYPE_1BPP_IDEAL);
+	bmpTypesMap.Add(TEXT("BITMAP_1BPP_VERTICAL"), BITMAP_TYPE_1BPP_VERTICAL);
+	bmpTypesMap.Add(TEXT("BITMAP_8BPP_PALETTE"), BITMAP_TYPE_8BPP_PALETTE);
+	bmpTypesMap.Add(TEXT("BITMAP_16BPP_565"), BITMAP_TYPE_16BPP_565);
+	bmpTypesMap.Add(TEXT("BITMAP_18BPP_666"), BITMAP_TYPE_18BPP_666);
+	bmpTypesMap.Add(TEXT("BITMAP_24BPP_888"), BITMAP_TYPE_24BPP_888);
+	bmpTypesMap.Add(TEXT("BITMAP_32BPP_8888"), BITMAP_TYPE_32BPP_8888);
 	
 	//Setup the properties control
 	selectBmpPropGrid.EnableHeaderCtrl();
@@ -340,10 +348,19 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 	// TODO: Add your control notification handler code here
 	CImage img;
 	int ret = 0;
-	CString arrName = TEXT("");
 	gfx_Bitmap_t* outbmp = NULL;
-	//UINT nCheck = SingleCFileCheckBox.GetState();
+	OPENFILENAME ofn;
 	SHORT numFiles = FilesToGenerateListCtrl.GetItemCount();
+
+	bool nCheck = props.getPropOutputSingleFile();
+	int width = 0;
+	int height = 0;
+	int dotPos = -1;
+	CString arrName = TEXT("");
+	CString outfilename = TEXT("");
+	CString inputfilename = TEXT("");
+	WCHAR outname[MAX_PATH + 1] = { 0 };
+	WCHAR outtitle[MAX_PATH + 1] = { 0 };
 
 	gfx_BitmapTypeEnum_t outputFormat = (gfx_BitmapTypeEnum_t) props.getPropOutputType();
 	//selectBmpPropGrid.GetProperty(OUTPUT_GRID_GROUP_IDX)->GetSubItem(OUTPUT_BPP_GRID_IDX);//pGroup1->GetSubItem(0)->AllowEdit(FALSE);
@@ -367,49 +384,49 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 
 
 
-	bool nCheck = props.getPropOutputSingleFile();
-	int width = 0;
-	int height = 0;
-	CString outfilename = L"";
-	WCHAR outname[MAX_PATH + 1];
+
 	while (numFiles > 0) {
 		numFiles--;
 		
-		CString inputfilename = FilesToGenerateListCtrl.GetItemText(0, 0);
-		int dotPos = inputfilename.ReverseFind('.');
+		inputfilename = FilesToGenerateListCtrl.GetItemText(0, 0);
 		
 		if (nCheck == BST_CHECKED) {
 			//We want to output all bitmaps to the same C file, so prompt user for a file name
 			if (outfilename == L"") {
 				//Prompt the user to choose a file to save to
-				OPENFILENAME ofn;
+
 				HRESULT hr = S_OK;
 
 				ZeroMemory(&ofn, sizeof(ofn));
 				ofn.lStructSize = sizeof(OPENFILENAME);
 				ofn.hwndOwner = ::GetTopWindow(this->m_hWnd);
-				ofn.lpstrFilter = TEXT("C Source Files (.C, .CPP, .H, .HPP)\0*.C;*.CPP;*.H;*.HPP\0")
+				ofn.lpstrFilter = TEXT("Source Files (.C, .CPP, .H)\0*.C;*.CPP;*.H\0")
 					TEXT("All Files (*.*)\0*.*\0\0");
 				ofn.nFilterIndex = 1;
 				ofn.lpstrFile = outname;
 				ofn.nMaxFile = MAX_PATH + 1;
+				ofn.lpstrFileTitle = outtitle;
+				ofn.nMaxFileTitle = MAX_PATH + 1;
 				ofn.lpstrTitle = TEXT("Save File");
-				ofn.Flags = OFN_HIDEREADONLY | OFN_EXPLORER;
+				ofn.Flags = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_EXPLORER;
 				ofn.lpstrDefExt = TEXT("C");
-
+				
 				// Launch the Open File dialog.
-				DWORD result = GetSaveFileName(&ofn);
+				BOOL result = GetSaveFileName(&ofn);
 				if (!result) {
 					return;
 				}
 				else {
+	
+					Win32DeleteFile(outname);
+
 					outfilename = outname;
 				}
-				//set variable to indicate opening file in append mode.
 			}
 		}
 		else {
 			//Each imput image will create its own C file, named the same as the image file, but with a .c extenstion
+			dotPos = inputfilename.ReverseFind('.');
 			outfilename = inputfilename;
 			outfilename.Truncate(dotPos);
 			outfilename.Append(TEXT(".c"));
@@ -430,7 +447,7 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 
 		ret = LoadBitmapFromFile(inputfilename, outputFormat, &outbmp);
 		if (0 == ret) {
-			WriteBitmapToCFile(inputfilename, outfilename, arrName, outbmp, true, true);
+			WriteBitmapToCFile(inputfilename, outfilename, arrName, outbmp, true, true, nCheck);
 			if (outbmp != NULL) {
 				gfx_bmp_DeleteBitmap(outbmp);
 			}
@@ -441,186 +458,29 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 }
 
 
-bool CLCDBitmapCreatorDlg::WriteBitmapToCFile(CString& InputFilename, CString& OutputFilename, CString& ArrayName, gfx_Bitmap_t* pBitmap, bool bAddBitmapHeader, bool bConst)
+gfx_BitmapTypeEnum_t CLCDBitmapCreatorDlg::getBmpTypeFromProp(CString& prop)
 {
-	FILE* pFile;
-	errno_t ret;
-	if (OutputFilename == "stdout")
-		pFile = stdout;
-	else
-		ret = _wfopen_s(&pFile, OutputFilename.GetBuffer(), L"wt+");
-
-	if (!pFile) {
-		wprintf(L"%s :: %s ::fopen(\"%s\") failed.\r\n", __FILEW__, __FUNCTIONW__, InputFilename.GetString());
-		//cout << __FILE__ "::" __FUNCTION__ "::fopen(\""<<InputFilename<<"\") failed.\r\n";
-		return true;
+	gfx_BitmapTypeEnum_t retVal = BITMAP_TYPE_1BPP_VERTICAL;
+	
+	int ret = bmpTypesMap.FindKey(prop);
+	
+	if (-1 != ret) {
+		retVal = bmpTypesMap.GetValueAt(ret);
 	}
-
-	fwprintf(pFile, L"// %s (%d,%d)\n", InputFilename.GetString(), pBitmap->uWidth, pBitmap->uHeight);
-	if (!ArrayName.IsEmpty()) {
-		fwprintf(pFile,L"// %s\n",InputFilename.GetString());
-		fwprintf(pFile,L"#include <types.h>\n");
-		if (bConst)
-			fwprintf(pFile, L"const gfx_Bitmap_t %s = {\n", ArrayName.GetString());
-		else
-			fwprintf(pFile, L"gfx_Bitmap_t %s = {\n", ArrayName.GetString());
-	}
-	fwprintf(pFile, L"{\n");
-	int iSize = 0;
-
-	switch (pBitmap->uType)
-	{
-	case BITMAP_TYPE_1BPP_IDEAL:
-	case BITMAP_TYPE_1BPP_VERTICAL:
-	case BITMAP_TYPE_16BPP_565:
-	case BITMAP_TYPE_18BPP_666:
-	case BITMAP_TYPE_24BPP_888:
-	case BITMAP_TYPE_32BPP_8888:
-	case BITMAP_TYPE_8BPP_PALETTE:
-		iSize = 4 + gfx_format_GetDataSize(pBitmap->uType)(pBitmap->uWidth, pBitmap->uHeight);
-		break;
-	default:
-		iSize = 0;
-		break;
-	}
-
-	if (bAddBitmapHeader)
-	{
-
-		fwprintf(pFile, L"    // First 32-bits is meta-data packed logically as in gfx_Bitmap_t:\n");
-		fwprintf(pFile, L"    // type(8)width(12)height(12), reversed in memory due to endian-ness\n");
-
-
-		fwprintf(pFile, L"    %s,\n", GetBmpEnumStr( (gfx_BitmapTypeEnum_t)((pBitmap->uType) & 0xff)).GetString());
-		fwprintf(pFile, L"    %u, ", (pBitmap->uWidth) & 0xfff);
-		fwprintf(pFile, L"%u,\n    {\n", (pBitmap->uHeight) & 0xfff);
-	}
-
-	for (int i = 1; i < (iSize + 3) / 4; i++)
-	{
-		if (pBitmap->uType == BITMAP_TYPE_18BPP_666)
-		{
-			// Special case for 18bpp 666 format
-			// Right justify the 6 most significant bits per octet
-			fwprintf(pFile, L"        0x%02X", (((uint32_t*)pBitmap)[i] >> 26) & 0xff);
-			fwprintf(pFile, L"%02X", (((uint32_t*)pBitmap)[i] >> 18) & 0xff);
-			fwprintf(pFile, L"%02X", ((((uint32_t*)pBitmap)[i]) >> 10) & 0xff);
-			fwprintf(pFile, L"%02X,\n", (((uint32_t*)pBitmap)[i] >> 2) & 0xff);
-		}
-		else
-		{
-			fwprintf(pFile, L"        0x%02X, ", (((uint32_t*)pBitmap)[i]) & 0xff);
-			fwprintf(pFile, L"0x%02X, ", (((uint32_t*)pBitmap)[i] >> 8) & 0xff);
-			fwprintf(pFile, L"0x%02X, ", (((uint32_t*)pBitmap)[i] >> 16) & 0xff);
-			fwprintf(pFile, L"0x%02X,\n", (((uint32_t*)pBitmap)[i] >> 24) & 0xff);
-
-		}
-	}
-
-	fwprintf(pFile, L"    },\n");
-
-	fwprintf(pFile, L"};\n");
-
-	fclose(pFile);
-
-	return false;
+	return retVal;
 }
 
-CString CLCDBitmapCreatorDlg::GetBmpEnumStr(gfx_BitmapTypeEnum_t type) {
+CString CLCDBitmapCreatorDlg::getBmpPropStrFromEnum(gfx_BitmapTypeEnum_t type) {
 
-	CString str = _T("");
-	switch (type)
-	{
-		case BITMAP_TYPE_1BPP_IDEAL:
-			str = _T("BITMAP_TYPE_1BPP_IDEAL");
-			break;
-		default:
-		case BITMAP_TYPE_1BPP_VERTICAL:
-			str = _T("BITMAP_TYPE_1BPP_VERTICAL");
-			break;
-		case BITMAP_TYPE_16BPP_565:
-			str = _T("BITMAP_TYPE_16BPP_565");
-			break;
-		case BITMAP_TYPE_18BPP_666:
-			str = _T("BITMAP_TYPE_18BPP_666");
-			break;
-		case BITMAP_TYPE_24BPP_888:
-			str = _T("BITMAP_TYPE_24BPP_888");
-			break;
-		case BITMAP_TYPE_32BPP_8888:
-			str = _T("BITMAP_TYPE_32BPP_8888");
-			break;
-		case BITMAP_TYPE_8BPP_PALETTE:
-			str = _T("BITMAP_TYPE_8BPP_PALETTE");
-			break;
+	CString str = TEXT("BITMAP_1BPP_VERTICAL");
+
+	int ret = bmpTypesMap.FindVal(type);
+	
+	if (-1 != ret) {
+		str = bmpTypesMap.GetKeyAt(ret);
 	}
+	
 	return str;
-}
-
-bool CLCDBitmapCreatorDlg::LoadBitmapFromFile(CString& inputFile, gfx_BitmapTypeEnum_t eOutputBitmapType, gfx_Bitmap_t** pBitmap)
-{
-	CImage image;
-
-	if (image.Load(inputFile) != S_OK)
-	{
-		wprintf(L"%Ts :: LoadBitmapFromFile :: image.Load(\"%s\") failed.\r\n", TEXT(__FILE__), inputFile.GetString());
-		//cout << __FILE__ "::LoadBitmapFromFile::image.Load(\""<<inputFile<<"\") failed.\r\n";
-		return true;
-	}
-	if (eOutputBitmapType == -1)
-	{
-		// Let's guess that it's 16BPP 565 always...
-		eOutputBitmapType = BITMAP_TYPE_1BPP_VERTICAL;
-	}
-	int size;
-	switch (eOutputBitmapType)
-	{
-	case BITMAP_TYPE_1BPP_IDEAL:
-	case BITMAP_TYPE_1BPP_VERTICAL:
-	case BITMAP_TYPE_16BPP_565:
-	case BITMAP_TYPE_18BPP_666:
-	case BITMAP_TYPE_24BPP_888:
-	case BITMAP_TYPE_32BPP_8888:
-	case BITMAP_TYPE_8BPP_PALETTE:
-		*pBitmap = gfx_bmp_CreateBitmap(eOutputBitmapType, image.GetWidth(), image.GetHeight());
-		//size = 4 + gfx_format_GetDataSize(eOutputBitmapType)(image.GetHeight(), image.GetWidth());
-		break;
-	default:
-		//size = 0;
-		*pBitmap = NULL;
-		break;
-	}
-
-	if (*pBitmap == NULL) {
-		wprintf(L"%Ts :: LoadBitmapFromFile :: unsupported Bitmap type.\r\n", TEXT(__FILE__));
-		return true;
-	}
-
-	//(*pBitmap)->uType = eOutputBitmapType;
-	//(*pBitmap)->uHeight = image.GetHeight();
-	//(*pBitmap)->uWidth = image.GetWidth();
-
-	COLORREF color;
-	COLORREF* pcolor;
-	uint32_t* pOutput = (uint32_t*)(*pBitmap)->pData;
-	for (int y = 0; y < image.GetHeight(); y++)
-	{
-		for (int x = 0; x < image.GetWidth(); x++)
-		{
-			if ((eOutputBitmapType == BITMAP_TYPE_32BPP_8888) && (image.GetBPP() == 32)) {
-				//get the address of the 32 bit pixel because we need to read it out.  GetPixel only return RGB data.
-				pcolor = (COLORREF*)image.GetPixelAddress(x, y);
-				color = RGBA((*pcolor & 0x00FF0000) >> 16, (*pcolor & 0x0000FF00) >> 8, (*pcolor & 0x000000FF), (*pcolor & 0xFF000000) >> 24);
-				*pOutput = color;
-				pOutput++;
-			}
-			else {
-				color = image.GetPixel(x, y);    //get 24-bit pixel data RGB
-				gfx_bmp_PutPixel(g_Pallete, *pBitmap, x, y, RGB(GetRValue(color), GetGValue(color), GetBValue(color)));
-			}
-		}
-	}
-	return false;
 }
 
 COleVariant* CLCDBitmapCreatorDlg::getGridProp(int propId) const
@@ -690,7 +550,7 @@ afx_msg LRESULT CLCDBitmapCreatorDlg::OnAfxWmPropertyChanged(WPARAM wParam, LPAR
 	short y;
 	double d;
 	float f;
-	bool status;
+	bool status = false;
 	CString str1;
 	switch (pVar->vt)
 	{
@@ -726,53 +586,161 @@ afx_msg LRESULT CLCDBitmapCreatorDlg::OnAfxWmPropertyChanged(WPARAM wParam, LPAR
 		case OUTPUT_IMG_GROUP:
 			break;
 		case OUTPUT_IMG_BPP:
-			if (str1 == _T("BITMAP_1BPP_IDEAL")) {
-				props.setPropOutputType(BITMAP_TYPE_1BPP_IDEAL);
-				m_OutputType = BITMAP_TYPE_1BPP_IDEAL;
-			}
-			else if(str1 == _T("BITMAP_1BPP_VERTICAL")){
-				props.setPropOutputType(BITMAP_TYPE_1BPP_VERTICAL);
-				m_OutputType = BITMAP_TYPE_1BPP_VERTICAL;
-			}
-			else if (str1 == _T("BITMAP_8BPP_PALETTE")) {
-				props.setPropOutputType(BITMAP_TYPE_8BPP_PALETTE);
-				m_OutputType = BITMAP_TYPE_8BPP_PALETTE;
-			}
-			else if (str1 == _T("BITMAP_16BPP_565")) {
-				props.setPropOutputType(BITMAP_TYPE_16BPP_565);
-				m_OutputType = BITMAP_TYPE_16BPP_565;
-			}
-			else if (str1 == _T("BITMAP_18BPP_666")) {
-				props.setPropOutputType(BITMAP_TYPE_18BPP_666);
-				m_OutputType = BITMAP_TYPE_18BPP_666;
-			}
-			else if (str1 == _T("BITMAP_24BPP_888")) {
-				props.setPropOutputType(BITMAP_TYPE_24BPP_888);
-				m_OutputType = BITMAP_TYPE_24BPP_888;
-			}
-			else if (str1 == _T("BITMAP_32BPP_8888")) {
-				props.setPropOutputType(BITMAP_TYPE_32BPP_8888);
-				m_OutputType = BITMAP_TYPE_32BPP_8888;
-			}
-			else {
-				//assume 1BPP Vertical
-				props.setPropOutputType(BITMAP_TYPE_1BPP_VERTICAL);
-				m_OutputType = BITMAP_TYPE_1BPP_VERTICAL;
-			}
+			props.setPropOutputType(getBmpTypeFromProp(str1));
 			break;
 		case OUTPUT_SINGLE_FILE:
-			m_OutputSingleFile = pVar->boolVal;
+			props.setPropOutputSingleFile(status);
 			break;
 	}
 
 	return 0;
 }
 
-
-void CLCDBitmapCreatorDlg::OnOptionsSinglecfile()
+bool CLCDBitmapCreatorDlg::WriteBitmapToCFile(CString& InputFilename, CString& OutputFilename, CString& ArrayName, gfx_Bitmap_t* pBitmap, bool bAddBitmapHeader, bool bConst, bool singleOutputFile)
 {
-	// TODO: Add your command handler code here
-	//::AfxGetApp()->GetMainWnd()->GetMenu()->
+	FILE* pFile;
+	errno_t ret;
+	WCHAR filemode[] = TEXT("wt+");
+	
+	if (true == singleOutputFile) {
+		filemode[0] = 'a';	//append mode not overwrite
+	}
+
+	if (OutputFilename == "stdout")
+		pFile = stdout;
+	else
+		ret = _wfopen_s(&pFile, OutputFilename.GetBuffer(), filemode);
+
+	if (!pFile) {
+		wprintf(L"%s :: %s ::fopen(\"%s\") failed.\r\n", __FILEW__, __FUNCTIONW__, InputFilename.GetString());
+		//cout << __FILE__ "::" __FUNCTION__ "::fopen(\""<<InputFilename<<"\") failed.\r\n";
+		return true;
+	}
+
+	fwprintf(pFile, L"// %s (%d,%d)\n", InputFilename.GetString(), pBitmap->uWidth, pBitmap->uHeight);
+	if (!ArrayName.IsEmpty()) {
+		fwprintf(pFile, L"// %s\n", InputFilename.GetString());
+		fwprintf(pFile, L"#include <types.h>\n");
+		if (bConst)
+			fwprintf(pFile, L"const gfx_Bitmap_t %s = {\n", ArrayName.GetString());
+		else
+			fwprintf(pFile, L"gfx_Bitmap_t %s = {\n", ArrayName.GetString());
+	}
+	fwprintf(pFile, L"{\n");
+	int iSize = 0;
+
+	switch (pBitmap->uType)
+	{
+	case BITMAP_TYPE_1BPP_IDEAL:
+	case BITMAP_TYPE_1BPP_VERTICAL:
+	case BITMAP_TYPE_16BPP_565:
+	case BITMAP_TYPE_18BPP_666:
+	case BITMAP_TYPE_24BPP_888:
+	case BITMAP_TYPE_32BPP_8888:
+	case BITMAP_TYPE_8BPP_PALETTE:
+		iSize = 4 + gfx_format_GetDataSize(pBitmap->uType)(pBitmap->uWidth, pBitmap->uHeight);
+		break;
+	default:
+		iSize = 0;
+		break;
+	}
+
+	if (bAddBitmapHeader)
+	{
+
+		fwprintf(pFile, L"    // First 32-bits is meta-data packed logically as in gfx_Bitmap_t:\n");
+		fwprintf(pFile, L"    // type(8)width(12)height(12), reversed in memory due to endian-ness\n");
 
 
+		fwprintf(pFile, L"    %s,\n", getBmpPropStrFromEnum((gfx_BitmapTypeEnum_t)((pBitmap->uType) & 0xff)).GetString());
+		fwprintf(pFile, L"    %u, ", (pBitmap->uWidth) & 0xfff);
+		fwprintf(pFile, L"%u,\n    {\n", (pBitmap->uHeight) & 0xfff);
+	}
+
+	for (int i = 1; i < (iSize + 3) / 4; i++)
+	{
+		if (pBitmap->uType == BITMAP_TYPE_18BPP_666)
+		{
+			// Special case for 18bpp 666 format
+			// Right justify the 6 most significant bits per octet
+			fwprintf(pFile, L"        0x%02X", (((uint32_t*)pBitmap)[i] >> 26) & 0xff);
+			fwprintf(pFile, L"%02X", (((uint32_t*)pBitmap)[i] >> 18) & 0xff);
+			fwprintf(pFile, L"%02X", ((((uint32_t*)pBitmap)[i]) >> 10) & 0xff);
+			fwprintf(pFile, L"%02X,\n", (((uint32_t*)pBitmap)[i] >> 2) & 0xff);
+		}
+		else
+		{
+			fwprintf(pFile, L"        0x%02X, ", (((uint32_t*)pBitmap)[i]) & 0xff);
+			fwprintf(pFile, L"0x%02X, ", (((uint32_t*)pBitmap)[i] >> 8) & 0xff);
+			fwprintf(pFile, L"0x%02X, ", (((uint32_t*)pBitmap)[i] >> 16) & 0xff);
+			fwprintf(pFile, L"0x%02X,\n", (((uint32_t*)pBitmap)[i] >> 24) & 0xff);
+
+		}
+	}
+
+	fwprintf(pFile, L"    },\n");
+	fwprintf(pFile, L"};\n");
+	fclose(pFile);
+
+	return false;
+}
+
+bool CLCDBitmapCreatorDlg::LoadBitmapFromFile(CString& inputFile, gfx_BitmapTypeEnum_t eOutputBitmapType, gfx_Bitmap_t** pBitmap)
+{
+	CImage image;
+
+	if (image.Load(inputFile) != S_OK)
+	{
+		wprintf(L"%Ts :: LoadBitmapFromFile :: image.Load(\"%s\") failed.\r\n", TEXT(__FILE__), inputFile.GetString());
+		//cout << __FILE__ "::LoadBitmapFromFile::image.Load(\""<<inputFile<<"\") failed.\r\n";
+		return true;
+	}
+	if (eOutputBitmapType == -1)
+	{
+		// Let's guess that it's BITMAP_TYPE_1BPP_VERTICAL always...
+		eOutputBitmapType = BITMAP_TYPE_1BPP_VERTICAL;
+	}
+
+	switch (eOutputBitmapType)
+	{
+	case BITMAP_TYPE_1BPP_IDEAL:
+	case BITMAP_TYPE_1BPP_VERTICAL:
+	case BITMAP_TYPE_16BPP_565:
+	case BITMAP_TYPE_18BPP_666:
+	case BITMAP_TYPE_24BPP_888:
+	case BITMAP_TYPE_32BPP_8888:
+	case BITMAP_TYPE_8BPP_PALETTE:
+		*pBitmap = gfx_bmp_CreateBitmap(eOutputBitmapType, image.GetWidth(), image.GetHeight());
+		break;
+	default:
+		*pBitmap = NULL;
+		break;
+	}
+
+	if (*pBitmap == NULL) {
+		wprintf(L"%Ts :: LoadBitmapFromFile :: unsupported Bitmap type.\r\n", TEXT(__FILE__));
+		return true;
+	}
+
+	COLORREF color;
+	COLORREF* pcolor;
+	uint32_t* pOutput = (uint32_t*)(*pBitmap)->pData;
+	for (int y = 0; y < image.GetHeight(); y++)
+	{
+		for (int x = 0; x < image.GetWidth(); x++)
+		{
+			if ((eOutputBitmapType == BITMAP_TYPE_32BPP_8888) && (image.GetBPP() == 32)) {
+				//get the address of the 32 bit pixel because we need to read it out.  GetPixel only return RGB data.
+				pcolor = (COLORREF*)image.GetPixelAddress(x, y);
+				color = RGBA((*pcolor & 0x00FF0000) >> 16, (*pcolor & 0x0000FF00) >> 8, (*pcolor & 0x000000FF), (*pcolor & 0xFF000000) >> 24);
+				*pOutput = color;
+				pOutput++;
+			}
+			else {
+				color = image.GetPixel(x, y);    //get 24-bit pixel data RGB
+				gfx_bmp_PutPixel(g_Pallete, *pBitmap, x, y, RGB(GetRValue(color), GetGValue(color), GetBValue(color)));
+			}
+		}
+	}
+	return false;
 }

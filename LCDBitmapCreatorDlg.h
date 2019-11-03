@@ -10,6 +10,7 @@
 #include "components/gfx/gfx_internal.h"
 #include "CBitmapCreatorProperties.h"
 
+
 #define MAX_LOADSTRING 100
 #define MAX_IMAGE_STREAMS 20
 
@@ -56,24 +57,26 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 	virtual BOOL OnInitDialog();
 public:
+	CMyStatic BitmapCtrl;
+	CMFCPropertyGridCtrl selectBmpPropGrid;
 	CListCtrl FilesToGenerateListCtrl;
 	MultiSelectFileList<MAX_PATH * MAX_IMAGE_STREAMS> MultiFileList;
 	CImage CurrentImg;
 
-	bool WriteBitmapToCFile(CString& InputFilename, CString& OutputFilename, CString& ArrayName, gfx_Bitmap_t* pBitmap, bool bAddBitmapHeader, bool bConst);
-	CString GetBmpEnumStr(gfx_BitmapTypeEnum_t type);
+	gfx_BitmapTypeEnum_t getBmpTypeFromProp(CString& prop);
+	CString getBmpPropStrFromEnum(gfx_BitmapTypeEnum_t type);
+	
+	bool WriteBitmapToCFile(CString& InputFilename, CString& OutputFilename, CString& ArrayName, gfx_Bitmap_t* pBitmap, bool bAddBitmapHeader, bool bConst, bool singleOutputFile = false);
 	bool LoadBitmapFromFile(CString& inputFile, gfx_BitmapTypeEnum_t eOutputBitmapType, gfx_Bitmap_t** pBitmap);
-	CMyStatic BitmapCtrl;
-	CMFCPropertyGridCtrl selectBmpPropGrid;
 
 	COleVariant* getGridProp(int propId) const;
 	void setGridProp(int propId, COleVariant &prop);
 
 	typedef struct _PropIdStruct_t {
-		int id;		//unique
-		int idx;	//unique per group
-		int grp;
-		bool isGrp;
+		int id;		//unique amongst groups
+		int idx;	//unique within a group
+		int grp;	//which grp foes this belong to
+		bool isGrp;	//is this a group itself?
 	} PropIdStruct_t;
 	
 	const PropIdStruct_t propTable[NUM_PROP_IDS + 1] = {
@@ -90,9 +93,10 @@ public:
 // Implementation
 protected:
 	HICON m_hIcon;
-	bool m_OutputSingleFile;
-	int m_OutputType;
 	CBitmapCreatorProperties props;
+	CSimpleMap<CString, gfx_BitmapTypeEnum_t> bmpTypesMap;
+
+
 	// Generated message map functions
 
 	DECLARE_MESSAGE_MAP()
@@ -105,6 +109,4 @@ protected:
 	afx_msg void OnBnClickedButtonExport();
 	afx_msg void OnLvnItemchangedListFiles(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnAfxWmPropertyChanged(WPARAM wParam, LPARAM lParam);
-public:
-	afx_msg void OnOptionsSinglecfile();
 };

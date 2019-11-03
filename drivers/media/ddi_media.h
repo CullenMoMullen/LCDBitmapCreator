@@ -328,30 +328,9 @@ extern InitializationState_t g_eFrameworkExternalMediaInit;
 extern const int g_MinDataDriveSize;
 extern const int g_MinDataDriveSize;
 
-///////////////////////////////////////////////////////////////////////////////
-// 4 Public API accessor macros to check external 'media, drive, and FS' init status. 
-///////////////////////////////////////////////////////////////////////////////
-#if (!defined(WIN32))
-
-// Returns true if the external drive's FS is present and ready to be used, else false.
-// See IsExternalDriveFsReady() in FSapi.h
-
-// Returns true if the external drive is init and present, else returns false.
-#define IsExternalDriveInit() (g_bFrameworkExternalDriveOrFsInit)
-
-// After exiting the media init pending state (can poll for media init no longer pending), 
-// then this becomes valid so check this to see if media init result.
-#define IsExternalMediaPresentAndInit() ((g_eFrameworkExternalMediaInit==eInitSucceeded)?true:false)
-
-// if the external media's init attempt has not yet completed, returns true; 
-// else the init attempt is complete so return false.
-#define IsExternalMediaInitPending()  ((g_eFrameworkExternalMediaInit==eInitPending)? true:false)
-
-#else 
 #define IsExternalDriveInit()           false
 #define IsExternalMediaPresentAndInit() false
 #define IsExternalMediaInitPending()    false
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // Prototypes

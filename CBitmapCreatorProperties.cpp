@@ -1,3 +1,7 @@
+
+
+
+
 #include "CBitmapCreatorProperties.h"
 CBitmapCreatorProperties::~CBitmapCreatorProperties()
 {
