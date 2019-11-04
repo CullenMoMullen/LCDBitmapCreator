@@ -1,5 +1,6 @@
 // stubs.c : Defines functions that are not needed by the image convert utility
 //
+
 #include "types.h"
 #include "components/gfx/gfx.h"
 #include "components/gfx/gfx_internal.h"
@@ -97,5 +98,3 @@ RtStatus_t util_lru_RemoveItemFromCache(util_lru_Cache_t* pCache, void* pKeyToEj
 bool gfx_rect_And(gfx_Rect_t* pRect, gfx_Rect_t* pRectB) {
 	return 0;
 }
-
-

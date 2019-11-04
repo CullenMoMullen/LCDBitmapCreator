@@ -115,83 +115,16 @@ BOOL CLCDBitmapCreatorDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 	
 	//Initialize the bitmap type mapping:
-	bmpTypesMap.Add(TEXT("BITMAP_1BPP_IDEAL"), BITMAP_TYPE_1BPP_IDEAL);
-	bmpTypesMap.Add(TEXT("BITMAP_1BPP_VERTICAL"), BITMAP_TYPE_1BPP_VERTICAL);
-	bmpTypesMap.Add(TEXT("BITMAP_8BPP_PALETTE"), BITMAP_TYPE_8BPP_PALETTE);
-	bmpTypesMap.Add(TEXT("BITMAP_16BPP_565"), BITMAP_TYPE_16BPP_565);
-	bmpTypesMap.Add(TEXT("BITMAP_18BPP_666"), BITMAP_TYPE_18BPP_666);
-	bmpTypesMap.Add(TEXT("BITMAP_24BPP_888"), BITMAP_TYPE_24BPP_888);
-	bmpTypesMap.Add(TEXT("BITMAP_32BPP_8888"), BITMAP_TYPE_32BPP_8888);
+	InitBmpStrEnumMap();
+	InitBmpPropGrid();
 	
-	//Setup the properties control
-	selectBmpPropGrid.EnableHeaderCtrl();
-	selectBmpPropGrid.EnableDescriptionArea();
-	selectBmpPropGrid.SetVSDotNetLook();
-	selectBmpPropGrid.MarkModifiedProperties();
-	selectBmpPropGrid.SetFont(::AfxGetApp()->GetMainWnd()->GetFont(), true);
-	CMFCPropertyGridProperty* pGroup1 = new CMFCPropertyGridProperty(_T("Selected Image"));
-	CMFCPropertyGridProperty* pGroup2 = new CMFCPropertyGridProperty(_T("Output Settings"));
-	// construct a COleVariant object.
-	_variant_t varOneFile((short)VARIANT_FALSE, VT_BOOL);
-	COleVariant varW(0L, VT_I4);
-	pGroup1->SetData(SEL_IMG_GROUP);
-	pGroup1->AddSubItem(new CMFCPropertyGridProperty(_T("Width"), varW, _T("Image width in pixels"), SEL_IMG_WIDTH));
-	pGroup1->AddSubItem(new CMFCPropertyGridProperty(_T("Height"), varW, _T("Image height in pixels"), SEL_IMG_HEIGHT));
-	pGroup1->AddSubItem(new CMFCPropertyGridProperty(_T("Bit Depth"), varW, _T("Number of Bits Per Pixel"), SEL_IMG_BPP));
-	pGroup1->GetSubItem(SEL_IMG_WIDTH_GRID_IDX)->AllowEdit(FALSE);
-	pGroup1->GetSubItem(SEL_IMG_HEIGHT_GRID_IDX)->AllowEdit(FALSE);
-	pGroup1->GetSubItem(SEL_IMG_BPP_GRID_IDX)->AllowEdit(FALSE);
-
-	COleVariant outFmtStr(_T("Choose Format..."),VT_BSTR);
-	CMFCPropertyGridProperty* pProp = new CMFCPropertyGridProperty(_T("Output Format"),	outFmtStr, 
-		_T("One of: \nBITMAP_1BPP_IDEAL\nBITMAP_1BPP_VERTICAL\nBITMAP_8BPP_PALETTE\nBITMAP_16BPP_565\nBITMAP_18BPP_666\nBITMAP_24BPP_888\nBITMAP_32BPP_8888"), 
-		OUTPUT_IMG_BPP);
-	pProp->AddOption(_T("BITMAP_1BPP_IDEAL"));
-	pProp->AddOption(_T("BITMAP_1BPP_VERTICAL"));
-	pProp->AddOption(_T("BITMAP_8BPP_PALETTE"));
-	pProp->AddOption(_T("BITMAP_16BPP_565"));
-	pProp->AddOption(_T("BITMAP_18BPP_666"));
-	pProp->AddOption(_T("BITMAP_24BPP_888"));
-	pProp->AddOption(_T("BITMAP_32BPP_8888"));
-	pProp->SetValue(_T("BITMAP_1BPP_VERTICAL"));	//Default choice
-	pProp->AllowEdit();
-	props.setPropOutputType(BITMAP_TYPE_1BPP_VERTICAL);
 	
-	pGroup2->SetData(OUTPUT_IMG_GROUP);
-	pGroup2->AddSubItem(pProp);
-
-	pGroup2->AddSubItem(new CMFCPropertyGridProperty(_T("Single C File"), varOneFile, _T("Generate one file containing all data structures?\n\nTrue: Will prompt for file name\n\nFalse: Files named relative to input files"), OUTPUT_SINGLE_FILE));
 	
-	pGroup1->Expand();
-	pGroup1->AllowEdit(TRUE);
-	pGroup1->Enable();
-	pGroup1->Show();
-	pGroup1->Redraw();
-
-	pGroup2->Expand();
-	pGroup2->AllowEdit(TRUE);
-	pGroup2->Enable();
-	pGroup2->Show();
-	pGroup2->Redraw();
-
-	selectBmpPropGrid.AddProperty(pGroup1);
-	selectBmpPropGrid.AddProperty(pGroup2);
-
-	LOGFONT lf;
-	CFont* font = CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT));
-	font->GetLogFont(&lf);
-
-	HDITEM hdItem;
-	hdItem.mask = HDI_WIDTH; // indicating cxy is width
-	hdItem.cxy = 170; // whatever you want the property name column width to be
-	selectBmpPropGrid.GetHeaderCtrl().SetItem(0, &hdItem);
-
 	// TODO: Add extra initialization here
 	RECT rect;
 	FilesToGenerateListCtrl.GetClientRect(&rect);
 	FilesToGenerateListCtrl.InsertColumn(0, TEXT("Images to convert"), 0, rect.right - rect.left);
 
-	//FileCreateProgress.SetMarquee(true, 500);
 	UpdateData(false);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
@@ -255,14 +188,14 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonOpen()
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(OPENFILENAME);
 	ofn.hwndOwner = ::GetTopWindow(this->m_hWnd);
-	ofn.lpstrFilter = TEXT("Image Files (.BMP, .JPG, .JPEG, .PNG, .ICO)\0*.BMP;*.JPG;*.JPEG;*.PNG;*.ICO\0")
+	ofn.lpstrFilter = TEXT("Image Files (.bmp, .jpg, .png)\0*.bmp;*.jpg;*.png\0")
 					  TEXT("All Files (*.*)\0*.*\0\0");
 	ofn.nFilterIndex = 1;
 	ofn.lpstrFile = MultiFileList.BufferPtr();
 	ofn.nMaxFile = MultiFileList.BufferSizeCch();
 	ofn.lpstrTitle = TEXT("Select Image Files...");
 	ofn.Flags = OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT | OFN_FILEMUSTEXIST | OFN_EXPLORER;
-	ofn.lpstrDefExt = TEXT("BMP");
+	ofn.lpstrDefExt = TEXT("bmp");
 
 	// Launch the Open File dialog.
 	DWORD result = GetOpenFileName(&ofn);
@@ -295,7 +228,16 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonOpen()
 			break;
 		}
 
-		FilesToGenerateListCtrl.InsertItem(0, pFileName, 0);
+		LVFINDINFOW findInfo;
+		int nIndex;
+		findInfo.flags = LVFI_STRING;
+		findInfo.psz = pFileName;
+
+		nIndex = FilesToGenerateListCtrl.FindItem(&findInfo);
+		//no duplicate files
+		if (nIndex == -1) {
+			FilesToGenerateListCtrl.InsertItem(0, pFileName, 0);
+		}
 
 		CoTaskMemFree(pFileName);
 
@@ -333,9 +275,9 @@ void CLCDBitmapCreatorDlg::OnLvnItemchangedListFiles(NMHDR* pNMHDR, LRESULT* pRe
 			props.setPropSelBmpHeight(height);
 			props.setPropSelBmpBpp(bpp);
 			
-			setGridProp(SEL_IMG_WIDTH, varW);
-			setGridProp(SEL_IMG_HEIGHT, varH);
-			setGridProp(SEL_IMG_BPP, varBpp);
+			setGridProp(SELECTED_IMG_WIDTH_PROP_ID, varW);
+			setGridProp(SELECTED_IMG_HEIGHT_PROP_ID, varH);
+			setGridProp(SELECTED_IMG_BPP_PROP_ID, varBpp);
 		}
 	}
 
@@ -363,7 +305,7 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 	WCHAR outtitle[MAX_PATH + 1] = { 0 };
 
 	gfx_BitmapTypeEnum_t outputFormat = (gfx_BitmapTypeEnum_t) props.getPropOutputType();
-	//selectBmpPropGrid.GetProperty(OUTPUT_GRID_GROUP_IDX)->GetSubItem(OUTPUT_BPP_GRID_IDX);//pGroup1->GetSubItem(0)->AllowEdit(FALSE);
+	//selectBmpPropGrid.GetProperty(OUTPUT_IMG_GRID_GROUP_IDX)->GetSubItem(OUTPUT_IMG_BPP_GRID_IDX);//pGroup1->GetSubItem(0)->AllowEdit(FALSE);
 	if (outputFormat == BITMAP_TYPE_INVALID) {
 		MessageBox(
 			_T("You must select an output format\nfor the generated C code!"),
@@ -400,7 +342,7 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 				ZeroMemory(&ofn, sizeof(ofn));
 				ofn.lStructSize = sizeof(OPENFILENAME);
 				ofn.hwndOwner = ::GetTopWindow(this->m_hWnd);
-				ofn.lpstrFilter = TEXT("Source Files (.C, .CPP, .H)\0*.C;*.CPP;*.H\0")
+				ofn.lpstrFilter = TEXT("Source Files (.c, .cpp, .h)\0*.c;*.cpp;*.h\0")
 					TEXT("All Files (*.*)\0*.*\0\0");
 				ofn.nFilterIndex = 1;
 				ofn.lpstrFile = outname;
@@ -409,7 +351,7 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 				ofn.nMaxFileTitle = MAX_PATH + 1;
 				ofn.lpstrTitle = TEXT("Save File");
 				ofn.Flags = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_EXPLORER;
-				ofn.lpstrDefExt = TEXT("C");
+				ofn.lpstrDefExt = TEXT("c");
 				
 				// Launch the Open File dialog.
 				BOOL result = GetSaveFileName(&ofn);
@@ -418,7 +360,7 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 				{
 					// NOTE: For mult-selection, CommDlgExtendedError can return FNERR_BUFFERTOOSMALL even when
 					// GetOpenFileName returns TRUE.
-					MessageBox(NULL, TEXT("Could not open files."), MB_OK | MB_ICONERROR);
+					MessageBox(NULL, TEXT("Could not open file path."), MB_OK | MB_ICONERROR);
 					return;
 				}
 				else if (!result)
@@ -473,6 +415,17 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 }
 
 
+void CLCDBitmapCreatorDlg::InitBmpStrEnumMap(void)
+{
+	bmpTypesMap.Add(TEXT("BITMAP_1BPP_IDEAL"), BITMAP_TYPE_1BPP_IDEAL);
+	bmpTypesMap.Add(TEXT("BITMAP_1BPP_VERTICAL"), BITMAP_TYPE_1BPP_VERTICAL);
+	bmpTypesMap.Add(TEXT("BITMAP_8BPP_PALETTE"), BITMAP_TYPE_8BPP_PALETTE);
+	bmpTypesMap.Add(TEXT("BITMAP_16BPP_565"), BITMAP_TYPE_16BPP_565);
+	bmpTypesMap.Add(TEXT("BITMAP_18BPP_666"), BITMAP_TYPE_18BPP_666);
+	bmpTypesMap.Add(TEXT("BITMAP_24BPP_888"), BITMAP_TYPE_24BPP_888);
+	bmpTypesMap.Add(TEXT("BITMAP_32BPP_8888"), BITMAP_TYPE_32BPP_8888);
+}
+
 gfx_BitmapTypeEnum_t CLCDBitmapCreatorDlg::getBmpTypeFromProp(CString& prop)
 {
 	gfx_BitmapTypeEnum_t retVal = BITMAP_TYPE_1BPP_VERTICAL;
@@ -487,6 +440,7 @@ gfx_BitmapTypeEnum_t CLCDBitmapCreatorDlg::getBmpTypeFromProp(CString& prop)
 
 CString CLCDBitmapCreatorDlg::getBmpPropStrFromEnum(gfx_BitmapTypeEnum_t type) {
 
+	//Default to BITMAP_1BPP_VERTICAL which is common to monochrome OLEDs
 	CString str = TEXT("BITMAP_1BPP_VERTICAL");
 
 	int ret = bmpTypesMap.FindVal(type);
@@ -498,6 +452,68 @@ CString CLCDBitmapCreatorDlg::getBmpPropStrFromEnum(gfx_BitmapTypeEnum_t type) {
 	return str;
 }
 
+void CLCDBitmapCreatorDlg::InitBmpPropGrid(void)
+{
+	//Setup the properties control
+	selectBmpPropGrid.EnableHeaderCtrl();
+	selectBmpPropGrid.EnableDescriptionArea();
+	selectBmpPropGrid.SetVSDotNetLook();
+	selectBmpPropGrid.MarkModifiedProperties();
+	selectBmpPropGrid.SetFont(::AfxGetApp()->GetMainWnd()->GetFont(), true);
+	CMFCPropertyGridProperty* pGroup1 = new CMFCPropertyGridProperty(_T("Selected Image"));
+	CMFCPropertyGridProperty* pGroup2 = new CMFCPropertyGridProperty(_T("Output Settings"));
+	// construct a COleVariant object.
+	_variant_t varOneFile((short)VARIANT_FALSE, VT_BOOL);
+	COleVariant varW(0L, VT_I4);
+	pGroup1->SetData(SELECTED_IMG_GROUP_PROP_ID);
+	pGroup1->AddSubItem(new CMFCPropertyGridProperty(_T("Width"), varW, _T("Image width in pixels"), SELECTED_IMG_WIDTH_PROP_ID));
+	pGroup1->AddSubItem(new CMFCPropertyGridProperty(_T("Height"), varW, _T("Image height in pixels"), SELECTED_IMG_HEIGHT_PROP_ID));
+	pGroup1->AddSubItem(new CMFCPropertyGridProperty(_T("Bit Depth"), varW, _T("Number of Bits Per Pixel"), SELECTED_IMG_BPP_PROP_ID));
+	pGroup1->GetSubItem(SELECTED_IMG_WIDTH_GRID_IDX)->AllowEdit(FALSE);
+	pGroup1->GetSubItem(SELECTED_IMG_HEIGHT_GRID_IDX)->AllowEdit(FALSE);
+	pGroup1->GetSubItem(SELECTED_IMG_BPP_GRID_IDX)->AllowEdit(FALSE);
+
+	COleVariant outFmtStr(_T("Choose Format..."), VT_BSTR);
+	CMFCPropertyGridProperty* pProp = new CMFCPropertyGridProperty(_T("Output Format"), outFmtStr,
+		_T("One of: \nBITMAP_1BPP_IDEAL\nBITMAP_1BPP_VERTICAL\nBITMAP_8BPP_PALETTE\nBITMAP_16BPP_565\nBITMAP_18BPP_666\nBITMAP_24BPP_888\nBITMAP_32BPP_8888"),
+		OUTPUT_IMG_BPP_PROP_ID);
+	pProp->AddOption(_T("BITMAP_1BPP_IDEAL"));
+	pProp->AddOption(_T("BITMAP_1BPP_VERTICAL"));
+	pProp->AddOption(_T("BITMAP_8BPP_PALETTE"));
+	pProp->AddOption(_T("BITMAP_16BPP_565"));
+	pProp->AddOption(_T("BITMAP_18BPP_666"));
+	pProp->AddOption(_T("BITMAP_24BPP_888"));
+	pProp->AddOption(_T("BITMAP_32BPP_8888"));
+	pProp->SetValue(_T("BITMAP_1BPP_VERTICAL"));	//Default choice
+	pProp->AllowEdit();
+	props.setPropOutputType(BITMAP_TYPE_1BPP_VERTICAL);
+
+	pGroup2->SetData(OUTPUT_IMG_GROUP_PROP_ID);
+	pGroup2->AddSubItem(pProp);
+
+	pGroup2->AddSubItem(new CMFCPropertyGridProperty(_T("Single C File"), varOneFile, _T("Generate one file containing all data structures?\n\nTrue: Will prompt for file name\n\nFalse: Files named relative to input files"), OUTPUT_IMG_SINGLE_FILE_PROP_ID));
+
+	pGroup1->Expand();
+	pGroup1->AllowEdit(TRUE);
+	pGroup1->Enable();
+	pGroup1->Show();
+	pGroup1->Redraw();
+
+	pGroup2->Expand();
+	pGroup2->AllowEdit(TRUE);
+	pGroup2->Enable();
+	pGroup2->Show();
+	pGroup2->Redraw();
+
+	selectBmpPropGrid.AddProperty(pGroup1);
+	selectBmpPropGrid.AddProperty(pGroup2);
+
+	HDITEM hdItem;
+	hdItem.mask = HDI_WIDTH; // indicating cxy is width
+	hdItem.cxy = 170; // whatever you want the property name column width to be
+	selectBmpPropGrid.GetHeaderCtrl().SetItem(0, &hdItem);
+}
+
 COleVariant* CLCDBitmapCreatorDlg::getGridProp(int propId) const
 {
 	PropIdStruct_t const * prop = propTable;
@@ -505,7 +521,7 @@ COleVariant* CLCDBitmapCreatorDlg::getGridProp(int propId) const
 	int group = -1;
 	int propIdx = -1;
 	bool isGrp = true;
-	while (prop->id != 0) {
+	while (INVALID_PROP_ID != prop->id) {		//the last entry in the array must use an ID of zero and zero in considered invalid
 		if (propId == prop->id) {
 			group = prop->grp;
 			propIdx = prop->idx;
@@ -532,7 +548,7 @@ void CLCDBitmapCreatorDlg::setGridProp(int propId, COleVariant &prop)
 	int group = -1;
 	int propIdx = -1;
 	bool isGrp = true;
-	while (property->id != 0) {
+	while (INVALID_PROP_ID != property->id) {
 		if (propId == property->id) {
 			group = property->grp;
 			propIdx = property->idx;
@@ -594,16 +610,16 @@ afx_msg LRESULT CLCDBitmapCreatorDlg::OnAfxWmPropertyChanged(WPARAM wParam, LPAR
 	}
 	
 	switch (pID) {
-		case SEL_IMG_GROUP:
-		case SEL_IMG_WIDTH:
-		case SEL_IMG_HEIGHT:
-		case SEL_IMG_BPP:
-		case OUTPUT_IMG_GROUP:
+		case SELECTED_IMG_GROUP_PROP_ID:
+		case SELECTED_IMG_WIDTH_PROP_ID:
+		case SELECTED_IMG_HEIGHT_PROP_ID:
+		case SELECTED_IMG_BPP_PROP_ID:
+		case OUTPUT_IMG_GROUP_PROP_ID:
 			break;
-		case OUTPUT_IMG_BPP:
+		case OUTPUT_IMG_BPP_PROP_ID:
 			props.setPropOutputType(getBmpTypeFromProp(str1));
 			break;
-		case OUTPUT_SINGLE_FILE:
+		case OUTPUT_IMG_SINGLE_FILE_PROP_ID:
 			props.setPropOutputSingleFile(status);
 			break;
 	}
@@ -672,8 +688,6 @@ bool CLCDBitmapCreatorDlg::WriteBitmapToCFile(CString& InputFilename, CString& O
 
 		fwprintf(pFile, L"    // First 32-bits is meta-data packed logically as in gfx_Bitmap_t:\n");
 		fwprintf(pFile, L"    // type(8)width(12)height(12), reversed in memory due to endian-ness\n");
-
-
 		fwprintf(pFile, L"    %s,\n", getBmpPropStrFromEnum((gfx_BitmapTypeEnum_t)((pBitmap->uType) & 0xff)).GetString());
 		fwprintf(pFile, L"    %u, ", (pBitmap->uWidth) & 0xfff);
 		fwprintf(pFile, L"%u,\n    {\n", (pBitmap->uHeight) & 0xfff);

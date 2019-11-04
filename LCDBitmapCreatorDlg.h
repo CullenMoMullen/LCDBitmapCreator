@@ -15,30 +15,30 @@
 #define MAX_IMAGE_STREAMS 20
 
 //Grid Idx
-#define SEL_IMG_GRID_GROUP_IDX 0
-#define SEL_IMG_WIDTH_GRID_IDX 0
-#define SEL_IMG_HEIGHT_GRID_IDX 1
-#define SEL_IMG_BPP_GRID_IDX 2
+#define SELECTED_IMG_GRID_GROUP_IDX		(0)
+#define SELECTED_IMG_WIDTH_GRID_IDX		(0)
+#define SELECTED_IMG_HEIGHT_GRID_IDX	(1)
+#define SELECTED_IMG_BPP_GRID_IDX		(2)
 
-#define OUTPUT_GRID_GROUP_IDX 1
-#define OUTPUT_BPP_GRID_IDX 0
-#define OUTPUT_SINGLE_FILE_GRID_IDX 1
+#define OUTPUT_IMG_GRID_GROUP_IDX		(1)
+#define OUTPUT_IMG_BPP_GRID_IDX			(0)
+#define OUTPUT_IMG_SINGLE_FILE_GRID_IDX	(1)
 
 //Unique Property IDs
-#define FIRST_GROUP_ID 0x1000
-#define SEL_IMG_GROUP FIRST_GROUP_ID
-#define SEL_IMG_WIDTH (SEL_IMG_GROUP+1)
-#define SEL_IMG_HEIGHT (SEL_IMG_GROUP+2)
-#define SEL_IMG_BPP (SEL_IMG_GROUP+3)
-#define SEL_IMG_LAST_ID (SEL_IMG_BPP)
+//Format for property IDs
+#define INVALID_PROP_ID					(0)
+#define FIRST_GROUP_PROP_ID				0x1000
+#define SELECTED_IMG_GROUP_PROP_ID		FIRST_GROUP_PROP_ID
+#define SELECTED_IMG_WIDTH_PROP_ID		(SELECTED_IMG_GROUP_PROP_ID + 1)
+#define SELECTED_IMG_HEIGHT_PROP_ID		(SELECTED_IMG_GROUP_PROP_ID + 2)
+#define SELECTED_IMG_BPP_PROP_ID		(SELECTED_IMG_GROUP_PROP_ID + 3)
+#define SELECTED_IMG_LAST_PROP_ID		(SELECTED_IMG_BPP_PROP_ID)
 
-#define OUTPUT_IMG_GROUP (SEL_IMG_LAST_ID+1)
-#define OUTPUT_IMG_BPP (OUTPUT_IMG_GROUP+1)
-#define OUTPUT_SINGLE_FILE (OUTPUT_IMG_GROUP+2)
+#define OUTPUT_IMG_GROUP_PROP_ID		(SELECTED_IMG_LAST_PROP_ID + 1)
+#define OUTPUT_IMG_BPP_PROP_ID			(OUTPUT_IMG_GROUP_PROP_ID + 1)
+#define OUTPUT_IMG_SINGLE_FILE_PROP_ID	(OUTPUT_IMG_GROUP_PROP_ID + 2)
 
-#define NUM_PROP_IDS (OUTPUT_SINGLE_FILE - FIRST_GROUP_ID +1)
-
-#define GET_PROP_IDX(x)
+#define NUM_PROP_IDS_IN_LUT				(OUTPUT_IMG_SINGLE_FILE_PROP_ID - FIRST_GROUP_PROP_ID + 1)
 
 
 // CLCDBitmapCreatorDlg dialog
@@ -64,38 +64,50 @@ public:
 	CImage CurrentImg;
 	BOOL includedAlready = false;
 
-	gfx_BitmapTypeEnum_t getBmpTypeFromProp(CString& prop);
-	CString getBmpPropStrFromEnum(gfx_BitmapTypeEnum_t type);
+
 	
 	bool WriteBitmapToCFile(CString& InputFilename, CString& OutputFilename, CString& ArrayName, gfx_Bitmap_t* pBitmap, bool bAddBitmapHeader, bool bConst, bool singleOutputFile = false);
 	bool LoadBitmapFromFile(CString& inputFile, gfx_BitmapTypeEnum_t eOutputBitmapType, gfx_Bitmap_t** pBitmap);
 
+
+
+private:
+	CBitmapCreatorProperties props;
+	CSimpleMap<CString, gfx_BitmapTypeEnum_t> bmpTypesMap;
+
+	void InitBmpStrEnumMap(void);
+	gfx_BitmapTypeEnum_t getBmpTypeFromProp(CString& prop);
+	CString getBmpPropStrFromEnum(gfx_BitmapTypeEnum_t type);
+	
+	void InitBmpPropGrid(void);
+
 	COleVariant* getGridProp(int propId) const;
-	void setGridProp(int propId, COleVariant &prop);
+	void setGridProp(int propId, COleVariant& prop);
 
 	typedef struct _PropIdStruct_t {
 		int id;		//unique amongst groups
 		int idx;	//unique within a group
-		int grp;	//which grp foes this belong to
+		int grp;	//which grp does this belong to
 		bool isGrp;	//is this a group itself?
 	} PropIdStruct_t;
-	
-	const PropIdStruct_t propTable[NUM_PROP_IDS + 1] = {
-		{SEL_IMG_GROUP,		SEL_IMG_GRID_GROUP_IDX,		SEL_IMG_GRID_GROUP_IDX, true},
-		{SEL_IMG_WIDTH,		SEL_IMG_WIDTH_GRID_IDX,		SEL_IMG_GRID_GROUP_IDX, false},
-		{SEL_IMG_HEIGHT,	SEL_IMG_HEIGHT_GRID_IDX,	SEL_IMG_GRID_GROUP_IDX, false},
-		{SEL_IMG_BPP,		SEL_IMG_BPP_GRID_IDX,		SEL_IMG_GRID_GROUP_IDX, false},
-		{OUTPUT_IMG_GROUP,	OUTPUT_GRID_GROUP_IDX,		OUTPUT_GRID_GROUP_IDX,	true},
-		{OUTPUT_IMG_BPP,	OUTPUT_BPP_GRID_IDX,		OUTPUT_GRID_GROUP_IDX,	false},
-		{OUTPUT_SINGLE_FILE,OUTPUT_SINGLE_FILE_GRID_IDX,OUTPUT_GRID_GROUP_IDX,	false},
+
+	//Maps Unique Property IDs to Grid Proprty Index
+	const PropIdStruct_t propTable[NUM_PROP_IDS_IN_LUT + 1] = {
+		{SELECTED_IMG_GROUP_PROP_ID,		SELECTED_IMG_GRID_GROUP_IDX,		SELECTED_IMG_GRID_GROUP_IDX,	true},
+		{SELECTED_IMG_WIDTH_PROP_ID,		SELECTED_IMG_WIDTH_GRID_IDX,		SELECTED_IMG_GRID_GROUP_IDX,	false},
+		{SELECTED_IMG_HEIGHT_PROP_ID,		SELECTED_IMG_HEIGHT_GRID_IDX,		SELECTED_IMG_GRID_GROUP_IDX,	false},
+		{SELECTED_IMG_BPP_PROP_ID,			SELECTED_IMG_BPP_GRID_IDX,			SELECTED_IMG_GRID_GROUP_IDX,	false},
+		{OUTPUT_IMG_GROUP_PROP_ID,			OUTPUT_IMG_GRID_GROUP_IDX,			OUTPUT_IMG_GRID_GROUP_IDX,		true},
+		{OUTPUT_IMG_BPP_PROP_ID,			OUTPUT_IMG_BPP_GRID_IDX,			OUTPUT_IMG_GRID_GROUP_IDX,		false},
+		{OUTPUT_IMG_SINGLE_FILE_PROP_ID,	OUTPUT_IMG_SINGLE_FILE_GRID_IDX,	OUTPUT_IMG_GRID_GROUP_IDX,		false},
+		//Add more groups and properties before the below line
 		{0,0,0,false}
 	};
 
 // Implementation
 protected:
 	HICON m_hIcon;
-	CBitmapCreatorProperties props;
-	CSimpleMap<CString, gfx_BitmapTypeEnum_t> bmpTypesMap;
+
 
 
 	// Generated message map functions
