@@ -368,15 +368,11 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 					// The user cancelled. (No error occurred.)
 					return;
 				}
-				
-				
-				if (!result) {
-					return;
-				}
 				else {
-	
-					Win32DeleteFile(outname);
-
+					//If the user chose to overwrite the file and it exists we should Delete it here
+					if (true == PathFileExists(outname)) {
+						Win32DeleteFile(outname);
+					}
 					outfilename = outname;
 				}
 			}
@@ -393,6 +389,25 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 		arrName = PathFindFileName(inputfilename);
 		dotPos = arrName.ReverseFind('.');
 		arrName.Truncate(dotPos);
+
+		CString validChars = TEXT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_1234567890");
+		
+		CString newArrayName = L"";
+		for (int i = 0; i < arrName.GetLength(); i++) {
+			wchar_t ch = arrName.GetAt(i);
+			if (validChars.Find(ch) != -1) {
+				newArrayName += ch;
+			}
+		}
+
+		if (newArrayName.GetAt(0) >= '0' && newArrayName.GetAt(0) <= '9') {
+			newArrayName.Insert(0, TEXT("bmp_"));
+		}
+		else if (newArrayName.GetAt(0) == '_') {
+			newArrayName.Insert(0, TEXT("bmp"));
+		}
+
+		arrName = newArrayName;
 
 		if (!img.IsNull()) {
 			img.Destroy();
@@ -412,6 +427,10 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 		FilesToGenerateListCtrl.DeleteItem(0);
 		UpdateData(false);
 	}
+	if (!BitmapCtrl.CurrentImg.IsNull()) {
+		BitmapCtrl.CurrentImg.Destroy();
+	}
+		BitmapCtrl.RedrawWindow();
 }
 
 

@@ -5,7 +5,6 @@
 #include "LCDBitmapCreator.h"
 #include "CMyStatic.h"
 
-
 // CMyStatic
 
 IMPLEMENT_DYNAMIC(CMyStatic, CStatic)
@@ -20,12 +19,9 @@ CMyStatic::~CMyStatic()
 {
 }
 
-
 BEGIN_MESSAGE_MAP(CMyStatic, CStatic)
 	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
-
-
 
 // CMyStatic message handlers
 void CMyStatic::DrawItem(LPDRAWITEMSTRUCT pdi)
@@ -61,9 +57,9 @@ void CMyStatic::DrawItem(LPDRAWITEMSTRUCT pdi)
 		RECT clRect{ 0 };
 		this->GetClientRect(&clRect);
 		HBRUSH br =  ::CreateSolidBrush(RGB(0x33, 0x33, 0x33));
-		::SelectObject(pdi->hDC, br);
+		HBRUSH oldbr = (HBRUSH) ::SelectObject(pdi->hDC, br);
 		::FillRect(pdi->hDC, &clRect, br);
-		::SelectObject(pdi->hDC, ::CreateSolidBrush(RGB(0xcc,0xcc,0xcc)));
+		::SelectObject(pdi->hDC, oldbr);
 		
 		
 		::SetStretchBltMode(pdi->hDC, STRETCH_DELETESCANS);
@@ -79,8 +75,16 @@ void CMyStatic::DrawItem(LPDRAWITEMSTRUCT pdi)
 		::ReleaseDC(HWND(pDC->GetWindow()), dcMem);
 		::ReleaseDC(HWND(pDC->GetWindow()), pdi->hDC);
 	}
+	else {
+		RECT clRect{ 0 };
+		this->GetClientRect(&clRect);
+		HBRUSH br = ::CreateSolidBrush(RGB(0x33, 0x33, 0x33));
+		HBRUSH oldbr = (HBRUSH) ::SelectObject(pdi->hDC, br);
+		::FillRect(pdi->hDC, &clRect, br);
+		::SelectObject(pdi->hDC, oldbr);
+		::DeleteObject(br);
+	}
 }
-
 
 void CMyStatic::OnLButtonUp(UINT nFlags, CPoint point)
 {
