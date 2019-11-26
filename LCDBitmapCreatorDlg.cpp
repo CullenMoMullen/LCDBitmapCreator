@@ -1,4 +1,3 @@
-
 // LCDBitmapCreatorDlg.cpp : implementation file
 //
 
@@ -6,6 +5,7 @@
 #include "framework.h"
 #include "LCDBitmapCreator.h"
 #include "LCDBitmapCreatorDlg.h"
+#include "DlgProxy.h"
 #include "afxdialogex.h"
 #include <atlimage.h>
 
@@ -21,6 +21,7 @@ extern "C" {
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
 
 // CAboutDlg dialog used for App About
 
@@ -57,10 +58,21 @@ END_MESSAGE_MAP()
 
 // CLCDBitmapCreatorDlg dialog
 
+IMPLEMENT_DYNAMIC(CLCDBitmapCreatorDlg, CDialogEx);
 CLCDBitmapCreatorDlg::CLCDBitmapCreatorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_LCDBITMAPCREATOR_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	m_pAutoProxy = nullptr;
+}
+
+CLCDBitmapCreatorDlg::~CLCDBitmapCreatorDlg()
+{
+	// If there is an automation proxy for this dialog, set
+	//  its back pointer to this dialog to null, so it knows
+	//  the dialog has been deleted.
+	if (m_pAutoProxy != nullptr)
+		m_pAutoProxy->m_pDialog = nullptr;
 }
 
 void CLCDBitmapCreatorDlg::DoDataExchange(CDataExchange* pDX)
@@ -69,16 +81,19 @@ void CLCDBitmapCreatorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST_FILES, FilesToGenerateListCtrl);
 	DDX_Control(pDX, IDC_DRAW_CTRL, BitmapCtrl);
 	DDX_Control(pDX, IDC_MFCPROPERTYGRIDSELBMP, selectBmpPropGrid);
+	DDX_Control(pDX, IDC_RICHEDIT_LOG_CTRL, m_ctrlLog);
 }
 
 BEGIN_MESSAGE_MAP(CLCDBitmapCreatorDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
+	ON_WM_CLOSE()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON_OPEN, &CLCDBitmapCreatorDlg::OnBnClickedButtonOpen)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_FILES, &CLCDBitmapCreatorDlg::OnLvnItemchangedListFiles)
 	ON_BN_CLICKED(IDC_BUTTON_EXPORT, &CLCDBitmapCreatorDlg::OnBnClickedButtonExport)
 	ON_REGISTERED_MESSAGE(AFX_WM_PROPERTY_CHANGED, &CLCDBitmapCreatorDlg::OnAfxWmPropertyChanged)
+	ON_BN_CLICKED(IDCANCEL, &CLCDBitmapCreatorDlg::OnBnClickedCancel)
 END_MESSAGE_MAP()
 
 
@@ -106,7 +121,6 @@ BOOL CLCDBitmapCreatorDlg::OnInitDialog()
 			pSysMenu->AppendMenu(MF_SEPARATOR);
 			pSysMenu->AppendMenu(MF_STRING, IDM_ABOUTBOX, strAboutMenu);
 		}
-
 	}
 
 	// Set the icon for this dialog.  The framework does this automatically
@@ -124,6 +138,11 @@ BOOL CLCDBitmapCreatorDlg::OnInitDialog()
 	RECT rect;
 	FilesToGenerateListCtrl.GetClientRect(&rect);
 	FilesToGenerateListCtrl.InsertColumn(0, TEXT("Images to convert"), 0, rect.right - rect.left);
+
+
+	//m_ctrlLog.SetBackgroundColor(false, COLOR_BLACK);
+
+	AppendToLog(TEXT("Application Started\nPress + button to choose files to convert\r\n"), COLOR_DARK_BLUE);
 
 	UpdateData(false);
 
@@ -179,6 +198,31 @@ HCURSOR CLCDBitmapCreatorDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+// Automation servers should not exit when a user closes the UI
+//  if a controller still holds on to one of its objects.  These
+//  message handlers make sure that if the proxy is still in use,
+//  then the UI is hidden but the dialog remains around if it
+//  is dismissed.
+
+//void CLCDBitmapCreatorDlg::OnCancel()
+//{
+//	if (CanExit())
+//		CDialogEx::OnCancel();
+//}
+BOOL CLCDBitmapCreatorDlg::CanExit()
+{
+	// If the proxy object is still around, then the automation
+	//  controller is still holding on to this application.  Leave
+	//  the dialog around, but hide its UI.
+	if (m_pAutoProxy != nullptr)
+	{
+		ShowWindow(SW_HIDE);
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
 void CLCDBitmapCreatorDlg::OnBnClickedButtonOpen()
 {
 	// TODO: Add your control notification handler code here
@@ -219,7 +263,7 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonOpen()
 	// Add each file to the list of images to convert
 	for (DWORD i = 0; i < MAX_IMAGE_STREAMS; i++)
 	{
-		TCHAR* pFileName = NULL;
+		WCHAR* pFileName = NULL;
 
 		FAIL_RET(hr = MultiFileList.Next(&pFileName));
 		if (hr == S_FALSE)
@@ -228,7 +272,7 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonOpen()
 			break;
 		}
 
-		LVFINDINFOW findInfo;
+		LVFINDINFO findInfo;
 		int nIndex;
 		findInfo.flags = LVFI_STRING;
 		findInfo.psz = pFileName;
@@ -237,6 +281,14 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonOpen()
 		//no duplicate files
 		if (nIndex == -1) {
 			FilesToGenerateListCtrl.InsertItem(0, pFileName, 0);
+			CString tmpStr;
+			tmpStr.Format(TEXT("File Added: %s successfully\r\n"), pFileName);
+			AppendToLogAndScroll(tmpStr, RGB(0, 128, 0));
+		}
+		else {
+			CString tmpStr;
+			tmpStr.Format(TEXT("WARNING: %s skipped as it is already included\r\n"), pFileName);
+			AppendToLogAndScroll(tmpStr, COLOR_DARK_YELLOW);
 		}
 
 		CoTaskMemFree(pFileName);
@@ -245,7 +297,6 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonOpen()
 	}
 	UpdateData(false);
 }
-
 
 void CLCDBitmapCreatorDlg::OnLvnItemchangedListFiles(NMHDR* pNMHDR, LRESULT* pResult)
 {
@@ -270,17 +321,19 @@ void CLCDBitmapCreatorDlg::OnLvnItemchangedListFiles(NMHDR* pNMHDR, LRESULT* pRe
 			COleVariant varW((long)width, VT_I4);
 			COleVariant varH((long)height, VT_I4);
 			COleVariant varBpp((long)bpp, VT_I4);
-			
+			COleVariant varFilePath(filestr);
+
 			props.setPropSelBmpWidth(width);
 			props.setPropSelBmpHeight(height);
 			props.setPropSelBmpBpp(bpp);
+			props.setPropSelBmpFilePath(filestr);
 			
 			setGridProp(SELECTED_IMG_WIDTH_PROP_ID, varW);
 			setGridProp(SELECTED_IMG_HEIGHT_PROP_ID, varH);
 			setGridProp(SELECTED_IMG_BPP_PROP_ID, varBpp);
+			setGridProp(SELECTED_IMG_FILE_PATH_PROP_ID, varFilePath);
 		}
 	}
-
 	*pResult = 0;
 }
 
@@ -289,7 +342,7 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 {
 	// TODO: Add your control notification handler code here
 	CImage img;
-	int ret = 0;
+	bool ret = 0;
 	gfx_Bitmap_t* outbmp = NULL;
 	OPENFILENAME ofn;
 	SHORT numFiles = FilesToGenerateListCtrl.GetItemCount();
@@ -308,8 +361,8 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 	//selectBmpPropGrid.GetProperty(OUTPUT_IMG_GRID_GROUP_IDX)->GetSubItem(OUTPUT_IMG_BPP_GRID_IDX);//pGroup1->GetSubItem(0)->AllowEdit(FALSE);
 	if (outputFormat == BITMAP_TYPE_INVALID) {
 		MessageBox(
-			_T("You must select an output format\nfor the generated C code!"),
-			_T("User Input Required"),
+			TEXT("You must select an output format\nfor the generated C code!"),
+			TEXT("User Input Required"),
 			MB_ICONERROR | MB_OK);
 
 		return;
@@ -317,13 +370,12 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 
 	if (FilesToGenerateListCtrl.GetItemCount() <= 0) {
 		MessageBox(
-			_T("Add at least one file to the list\nof images to be converted to code!"),
-			_T("Nothing To Do"),
+			TEXT("Add at least one file to the list\nof images to be converted to code!"),
+			TEXT("Nothing To Do"),
 			MB_ICONERROR | MB_OK);
 
 		return;
 	}
-
 
 	//assume we are starting a new file even if it is a single file
 	includedAlready = false;
@@ -356,22 +408,20 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 				// Launch the Open File dialog.
 				BOOL result = GetSaveFileName(&ofn);
 				// Check for errors.
-				if (CommDlgExtendedError() != 0)
-				{
+				if (CommDlgExtendedError() != 0) {
 					// NOTE: For mult-selection, CommDlgExtendedError can return FNERR_BUFFERTOOSMALL even when
 					// GetOpenFileName returns TRUE.
 					MessageBox(NULL, TEXT("Could not open file path."), MB_OK | MB_ICONERROR);
 					return;
 				}
-				else if (!result)
-				{
+				else if (!result) {
 					// The user cancelled. (No error occurred.)
 					return;
 				}
 				else {
 					//If the user chose to overwrite the file and it exists we should Delete it here
-					if (true == PathFileExists(outname)) {
-						Win32DeleteFile(outname);
+					if (TRUE == PathFileExists(outname)) {
+						DeleteFile(outname);
 					}
 					outfilename = outname;
 				}
@@ -391,10 +441,9 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 		arrName.Truncate(dotPos);
 
 		CString validChars = TEXT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_1234567890");
-		
-		CString newArrayName = L"";
+		CString newArrayName = TEXT("");
 		for (int i = 0; i < arrName.GetLength(); i++) {
-			wchar_t ch = arrName.GetAt(i);
+			WCHAR ch = arrName.GetAt(i);
 			if (validChars.Find(ch) != -1) {
 				newArrayName += ch;
 			}
@@ -418,9 +467,13 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 		height = img.GetHeight();
 
 		ret = LoadBitmapFromFile(inputfilename, outputFormat, &outbmp);
-		if (0 == ret) {
-			WriteBitmapToCFile(inputfilename, outfilename, arrName, outbmp, true, true, nCheck);
+		if (false == ret) {
+			ret = WriteBitmapToCFile(inputfilename, outfilename, arrName, outbmp, true, true, nCheck);
 			if (outbmp != NULL) {
+				CString tmpStr;
+				tmpStr.Format(TEXT("Created array %s in %s\r\n"), arrName.GetString(), outfilename.GetString());
+				AppendToLogAndScroll(tmpStr,RGB(0,0,0));
+				//LogCtrl.GetScrollBarCtrl()
 				gfx_bmp_DeleteBitmap(outbmp);
 			}
 		}
@@ -436,6 +489,7 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 
 void CLCDBitmapCreatorDlg::InitBmpStrEnumMap(void)
 {
+	//creates a mapping between text shown in dropdown and the enum type in our graphics library
 	bmpTypesMap.Add(TEXT("BITMAP_1BPP_IDEAL"), BITMAP_TYPE_1BPP_IDEAL);
 	bmpTypesMap.Add(TEXT("BITMAP_1BPP_VERTICAL"), BITMAP_TYPE_1BPP_VERTICAL);
 	bmpTypesMap.Add(TEXT("BITMAP_8BPP_PALETTE"), BITMAP_TYPE_8BPP_PALETTE);
@@ -457,17 +511,14 @@ gfx_BitmapTypeEnum_t CLCDBitmapCreatorDlg::getBmpTypeFromProp(CString& prop)
 	return retVal;
 }
 
-CString CLCDBitmapCreatorDlg::getBmpPropStrFromEnum(gfx_BitmapTypeEnum_t type) {
-
+CString CLCDBitmapCreatorDlg::getBmpPropStrFromEnum(gfx_BitmapTypeEnum_t type)
+{
 	//Default to BITMAP_1BPP_VERTICAL which is common to monochrome OLEDs
 	CString str = TEXT("BITMAP_1BPP_VERTICAL");
-
 	int ret = bmpTypesMap.FindVal(type);
-	
 	if (-1 != ret) {
 		str = bmpTypesMap.GetKeyAt(ret);
 	}
-	
 	return str;
 }
 
@@ -479,38 +530,42 @@ void CLCDBitmapCreatorDlg::InitBmpPropGrid(void)
 	selectBmpPropGrid.SetVSDotNetLook();
 	selectBmpPropGrid.MarkModifiedProperties();
 	selectBmpPropGrid.SetFont(::AfxGetApp()->GetMainWnd()->GetFont(), true);
-	CMFCPropertyGridProperty* pGroup1 = new CMFCPropertyGridProperty(_T("Selected Image"));
-	CMFCPropertyGridProperty* pGroup2 = new CMFCPropertyGridProperty(_T("Output Settings"));
+	
+	CMFCPropertyGridProperty* pGroup1 = new CMFCPropertyGridProperty(TEXT("Selected Image"));
+	CMFCPropertyGridProperty* pGroup2 = new CMFCPropertyGridProperty(TEXT("Output Settings"));
 	// construct a COleVariant object.
 	_variant_t varOneFile((short)VARIANT_FALSE, VT_BOOL);
+	_variant_t varFilePath(TEXT(""));
 	COleVariant varW(0L, VT_I4);
 	pGroup1->SetData(SELECTED_IMG_GROUP_PROP_ID);
-	pGroup1->AddSubItem(new CMFCPropertyGridProperty(_T("Width"), varW, _T("Image width in pixels"), SELECTED_IMG_WIDTH_PROP_ID));
-	pGroup1->AddSubItem(new CMFCPropertyGridProperty(_T("Height"), varW, _T("Image height in pixels"), SELECTED_IMG_HEIGHT_PROP_ID));
-	pGroup1->AddSubItem(new CMFCPropertyGridProperty(_T("Bit Depth"), varW, _T("Number of Bits Per Pixel"), SELECTED_IMG_BPP_PROP_ID));
+	pGroup1->AddSubItem(new CMFCPropertyGridProperty(TEXT("Width"), varW, TEXT("Image width in pixels"), SELECTED_IMG_WIDTH_PROP_ID));
+	pGroup1->AddSubItem(new CMFCPropertyGridProperty(TEXT("Height"), varW, TEXT("Image height in pixels"), SELECTED_IMG_HEIGHT_PROP_ID));
+	pGroup1->AddSubItem(new CMFCPropertyGridProperty(TEXT("Bit Depth"), varW, TEXT("Number of Bits Per Pixel"), SELECTED_IMG_BPP_PROP_ID));
+	pGroup1->AddSubItem(new CMFCPropertyGridProperty(TEXT("File Path"), varFilePath, TEXT("Path of Selected File"), SELECTED_IMG_FILE_PATH_PROP_ID));
 	pGroup1->GetSubItem(SELECTED_IMG_WIDTH_GRID_IDX)->AllowEdit(FALSE);
 	pGroup1->GetSubItem(SELECTED_IMG_HEIGHT_GRID_IDX)->AllowEdit(FALSE);
 	pGroup1->GetSubItem(SELECTED_IMG_BPP_GRID_IDX)->AllowEdit(FALSE);
+	pGroup1->GetSubItem(SELECTED_IMG_FILE_PATH_GRID_IDX)->AllowEdit(FALSE);
 
-	COleVariant outFmtStr(_T("Choose Format..."), VT_BSTR);
-	CMFCPropertyGridProperty* pProp = new CMFCPropertyGridProperty(_T("Output Format"), outFmtStr,
-		_T("One of: \nBITMAP_1BPP_IDEAL\nBITMAP_1BPP_VERTICAL\nBITMAP_8BPP_PALETTE\nBITMAP_16BPP_565\nBITMAP_18BPP_666\nBITMAP_24BPP_888\nBITMAP_32BPP_8888"),
+	COleVariant outFmtStr(TEXT("Choose Format..."), VT_BSTR);
+	CMFCPropertyGridProperty* pProp = new CMFCPropertyGridProperty(TEXT("Output Format"), outFmtStr,
+		TEXT("One of: \nBITMAP_1BPP_IDEAL\nBITMAP_1BPP_VERTICAL\nBITMAP_8BPP_PALETTE\nBITMAP_16BPP_565\nBITMAP_18BPP_666\nBITMAP_24BPP_888\nBITMAP_32BPP_8888"),
 		OUTPUT_IMG_BPP_PROP_ID);
-	pProp->AddOption(_T("BITMAP_1BPP_IDEAL"));
-	pProp->AddOption(_T("BITMAP_1BPP_VERTICAL"));
-	pProp->AddOption(_T("BITMAP_8BPP_PALETTE"));
-	pProp->AddOption(_T("BITMAP_16BPP_565"));
-	pProp->AddOption(_T("BITMAP_18BPP_666"));
-	pProp->AddOption(_T("BITMAP_24BPP_888"));
-	pProp->AddOption(_T("BITMAP_32BPP_8888"));
-	pProp->SetValue(_T("BITMAP_1BPP_VERTICAL"));	//Default choice
+	pProp->AddOption(TEXT("BITMAP_1BPP_IDEAL"));
+	pProp->AddOption(TEXT("BITMAP_1BPP_VERTICAL"));
+	pProp->AddOption(TEXT("BITMAP_8BPP_PALETTE"));
+	pProp->AddOption(TEXT("BITMAP_16BPP_565"));
+	pProp->AddOption(TEXT("BITMAP_18BPP_666"));
+	pProp->AddOption(TEXT("BITMAP_24BPP_888"));
+	pProp->AddOption(TEXT("BITMAP_32BPP_8888"));
+	pProp->SetValue(TEXT("BITMAP_1BPP_VERTICAL"));	//Default choice
 	pProp->AllowEdit();
 	props.setPropOutputType(BITMAP_TYPE_1BPP_VERTICAL);
 
 	pGroup2->SetData(OUTPUT_IMG_GROUP_PROP_ID);
 	pGroup2->AddSubItem(pProp);
 
-	pGroup2->AddSubItem(new CMFCPropertyGridProperty(_T("Single C File"), varOneFile, _T("Generate one file containing all data structures?\n\nTrue: Will prompt for file name\n\nFalse: Files named relative to input files"), OUTPUT_IMG_SINGLE_FILE_PROP_ID));
+	pGroup2->AddSubItem(new CMFCPropertyGridProperty(TEXT("Single C File"), varOneFile, TEXT("Generate one file containing all data structures?\n\nTrue: Will prompt for file name\n\nFalse: Files named relative to input files"), OUTPUT_IMG_SINGLE_FILE_PROP_ID));
 
 	pGroup1->Expand();
 	pGroup1->AllowEdit(TRUE);
@@ -531,6 +586,8 @@ void CLCDBitmapCreatorDlg::InitBmpPropGrid(void)
 	hdItem.mask = HDI_WIDTH; // indicating cxy is width
 	hdItem.cxy = 170; // whatever you want the property name column width to be
 	selectBmpPropGrid.GetHeaderCtrl().SetItem(0, &hdItem);
+
+
 }
 
 COleVariant* CLCDBitmapCreatorDlg::getGridProp(int propId) const
@@ -560,6 +617,40 @@ COleVariant* CLCDBitmapCreatorDlg::getGridProp(int propId) const
 	return GridProp;
 }
 
+
+//-----------------------------------------------------------------------------
+//  CLCDBitmapCreatorDlg::setGridProp()
+///
+/// \brief	Add a string to the log window at the current position and scroll
+///			by the number of inserted lines (the naive solution for
+///			auto-scrolling).
+///
+/// The string is added to the log starting at the current position,
+/// i.e. without starting a new line. Then the control scrolls down by the
+/// number of lines inserted.
+/// The string is displayed in the specified text color.
+/// The string may be a multiline string using carriage return/line feed
+/// (i.e. newline) characters to indicate a line breaks.
+///
+/// \param [in]		propId	The unique ID assigned to the property you would
+///							like to set the value for.
+/// \param [in]		color	The text color of the string. You may use the
+///							RGB(r,g,b) macro to specify the color byte-wise.
+/// \return					An integer indicating sucess or failure:
+///							- 0, if the function succeeded.
+///							- (-1), if the function failed.
+///							(This function always returns 0, because no
+///							parameter or failure checking is done.)
+///
+/// \remark
+/// Support for adding multiline strings requires the ES_MULTILINE style
+/// to be set.
+/// If you are not using the Visual Studio Wizards but create the control
+/// indirectly using the Create() method, you should use the following
+/// style: WS_CHILD|WS_VSCROLL|WS_HSCROLL|ES_MULTILINE|ES_READONLY.
+///
+/// \sa AppendToLogAndScroll()
+//-----------------------------------------------------------------------------
 void CLCDBitmapCreatorDlg::setGridProp(int propId, COleVariant &prop)
 {
 	PropIdStruct_t const* property = propTable;
@@ -604,28 +695,28 @@ afx_msg LRESULT CLCDBitmapCreatorDlg::OnAfxWmPropertyChanged(WPARAM wParam, LPAR
 	CString str1;
 	switch (pVar->vt)
 	{
-	case VT_I2:    // short
-		y = pVar->iVal;
-		break;
-	case VT_I4:     // int
-		x = pVar->lVal;
-		break;
-	case VT_R4:    // float
-		f = pVar->fltVal;
-		break;
-	case VT_R8:    // double
-		d = pVar->dblVal;
-		break;
-	case VT_INT:
-		x = pVar->lVal;
-		break;
-	case VT_BOOL:
-		status = pVar->boolVal;
-		break;
-	case VT_BSTR:
-		str1 = pVar->bstrVal;
-		break;
-		// etc.
+		case VT_I2:    // short
+			y = pVar->iVal;
+			break;
+		case VT_I4:     // int
+			x = pVar->lVal;
+			break;
+		case VT_R4:    // float
+			f = pVar->fltVal;
+			break;
+		case VT_R8:    // double
+			d = pVar->dblVal;
+			break;
+		case VT_INT:
+			x = pVar->lVal;
+			break;
+		case VT_BOOL:
+			status = pVar->boolVal;
+			break;
+		case VT_BSTR:
+			str1 = pVar->bstrVal;
+			break;
+			// etc.
 	}
 	
 	switch (pID) {
@@ -662,12 +753,12 @@ bool CLCDBitmapCreatorDlg::WriteBitmapToCFile(CString& InputFilename, CString& O
 		ret = _wfopen_s(&pFile, OutputFilename.GetBuffer(), filemode);
 
 	if (!pFile) {
-		wprintf(L"%s :: %s ::fopen(\"%s\") failed.\r\n", __FILEW__, __FUNCTIONW__, InputFilename.GetString());
+		wprintf(TEXT("%s :: %s ::fopen(\"%s\") failed.\r\n"), TEXT(__FILE__), TEXT(__FUNCTION__), InputFilename.GetString());
 		//cout << __FILE__ "::" __FUNCTION__ "::fopen(\""<<InputFilename<<"\") failed.\r\n";
 		return true;
 	}
 
-	fwprintf(pFile, L"// %s (%d,%d)\n", InputFilename.GetString(), pBitmap->uWidth, pBitmap->uHeight);
+	fwprintf(pFile, TEXT("// %s (%d,%d)\n"), InputFilename.GetString(), pBitmap->uWidth, pBitmap->uHeight);
 	if (!ArrayName.IsEmpty()) {
 		//fwprintf(pFile, L"// %s\n", InputFilename.GetString());
 		if ((singleOutputFile == false) || 
@@ -675,41 +766,41 @@ bool CLCDBitmapCreatorDlg::WriteBitmapToCFile(CString& InputFilename, CString& O
 			 (false == includedAlready))
 		) {
 			includedAlready = true;
-			fwprintf(pFile, L"#include <types.h>\n");
+			fwprintf(pFile, TEXT("#include <types.h>\n"));
 		}
 		if (bConst)
-			fwprintf(pFile, L"const gfx_Bitmap_t %s = {\n", ArrayName.GetString());
+			fwprintf(pFile, TEXT("const gfx_Bitmap_t %s = {\n"), ArrayName.GetString());
 		else
-			fwprintf(pFile, L"gfx_Bitmap_t %s = {\n", ArrayName.GetString());
+			fwprintf(pFile, TEXT("gfx_Bitmap_t %s = {\n"), ArrayName.GetString());
 	}
 
-	fwprintf(pFile, L"{\n");
+	fwprintf(pFile, TEXT("{\n"));
 	int iSize = 0;
 
 	switch (pBitmap->uType)
 	{
-	case BITMAP_TYPE_1BPP_IDEAL:
-	case BITMAP_TYPE_1BPP_VERTICAL:
-	case BITMAP_TYPE_16BPP_565:
-	case BITMAP_TYPE_18BPP_666:
-	case BITMAP_TYPE_24BPP_888:
-	case BITMAP_TYPE_32BPP_8888:
-	case BITMAP_TYPE_8BPP_PALETTE:
-		iSize = 4 + gfx_format_GetDataSize(pBitmap->uType)(pBitmap->uWidth, pBitmap->uHeight);
-		break;
-	default:
-		iSize = 0;
-		break;
+		case BITMAP_TYPE_1BPP_IDEAL:
+		case BITMAP_TYPE_1BPP_VERTICAL:
+		case BITMAP_TYPE_16BPP_565:
+		case BITMAP_TYPE_18BPP_666:
+		case BITMAP_TYPE_24BPP_888:
+		case BITMAP_TYPE_32BPP_8888:
+		case BITMAP_TYPE_8BPP_PALETTE:
+			iSize = 4 + gfx_format_GetDataSize(pBitmap->uType)(pBitmap->uWidth, pBitmap->uHeight);
+			break;
+		default:
+			iSize = 0;
+			break;
 	}
 
 	if (bAddBitmapHeader)
 	{
 
-		fwprintf(pFile, L"    // First 32-bits is meta-data packed logically as in gfx_Bitmap_t:\n");
-		fwprintf(pFile, L"    // type(8)width(12)height(12), reversed in memory due to endian-ness\n");
-		fwprintf(pFile, L"    %s,\n", getBmpPropStrFromEnum((gfx_BitmapTypeEnum_t)((pBitmap->uType) & 0xff)).GetString());
-		fwprintf(pFile, L"    %u, ", (pBitmap->uWidth) & 0xfff);
-		fwprintf(pFile, L"%u,\n    {\n", (pBitmap->uHeight) & 0xfff);
+		fwprintf(pFile, TEXT("    // First 32-bits is meta-data packed logically as in gfx_Bitmap_t:\n"));
+		fwprintf(pFile, TEXT("    // type(8)width(12)height(12), reversed in memory due to endian-ness\n"));
+		fwprintf(pFile, TEXT("    %s,\n"), getBmpPropStrFromEnum((gfx_BitmapTypeEnum_t)((pBitmap->uType) & 0xff)).GetString());
+		fwprintf(pFile, TEXT("    %u, "), (pBitmap->uWidth) & 0xfff);
+		fwprintf(pFile, TEXT("%u,\n    {\n"), (pBitmap->uHeight) & 0xfff);
 	}
 
 	for (int i = 1; i < (iSize + 3) / 4; i++)
@@ -718,23 +809,23 @@ bool CLCDBitmapCreatorDlg::WriteBitmapToCFile(CString& InputFilename, CString& O
 		{
 			// Special case for 18bpp 666 format
 			// Right justify the 6 most significant bits per octet
-			fwprintf(pFile, L"        0x%02X", (((uint32_t*)pBitmap)[i] >> 26) & 0xff);
-			fwprintf(pFile, L"%02X", (((uint32_t*)pBitmap)[i] >> 18) & 0xff);
-			fwprintf(pFile, L"%02X", ((((uint32_t*)pBitmap)[i]) >> 10) & 0xff);
-			fwprintf(pFile, L"%02X,\n", (((uint32_t*)pBitmap)[i] >> 2) & 0xff);
+			fwprintf(pFile, TEXT("        0x%02X"), (((uint32_t*)pBitmap)[i] >> 26) & 0xff);
+			fwprintf(pFile, TEXT("%02X"), (((uint32_t*)pBitmap)[i] >> 18) & 0xff);
+			fwprintf(pFile, TEXT("%02X"), ((((uint32_t*)pBitmap)[i]) >> 10) & 0xff);
+			fwprintf(pFile, TEXT("%02X,\n"), (((uint32_t*)pBitmap)[i] >> 2) & 0xff);
 		}
 		else
 		{
-			fwprintf(pFile, L"        0x%02X, ", (((uint32_t*)pBitmap)[i]) & 0xff);
-			fwprintf(pFile, L"0x%02X, ", (((uint32_t*)pBitmap)[i] >> 8) & 0xff);
-			fwprintf(pFile, L"0x%02X, ", (((uint32_t*)pBitmap)[i] >> 16) & 0xff);
-			fwprintf(pFile, L"0x%02X,\n", (((uint32_t*)pBitmap)[i] >> 24) & 0xff);
+			fwprintf(pFile, TEXT("        0x%02X, "), (((uint32_t*)pBitmap)[i]) & 0xff);
+			fwprintf(pFile, TEXT("0x%02X, "), (((uint32_t*)pBitmap)[i] >> 8) & 0xff);
+			fwprintf(pFile, TEXT("0x%02X, "), (((uint32_t*)pBitmap)[i] >> 16) & 0xff);
+			fwprintf(pFile, TEXT("0x%02X,\n"), (((uint32_t*)pBitmap)[i] >> 24) & 0xff);
 
 		}
 	}
 
-	fwprintf(pFile, L"    },\n");
-	fwprintf(pFile, L"};\n");
+	fwprintf(pFile, TEXT("    },\n"));
+	fwprintf(pFile, TEXT("};\n"));
 	fclose(pFile);
 
 	return false;
@@ -744,36 +835,36 @@ bool CLCDBitmapCreatorDlg::LoadBitmapFromFile(CString& inputFile, gfx_BitmapType
 {
 	CImage image;
 
-	if (image.Load(inputFile) != S_OK)
+	if(image.Load(inputFile) != S_OK)
 	{
-		wprintf(L"%Ts :: LoadBitmapFromFile :: image.Load(\"%s\") failed.\r\n", TEXT(__FILE__), inputFile.GetString());
+		wprintf(TEXT("%s :: LoadBitmapFromFile :: image.Load(\"%s\") failed.\r\n"), TEXT(__FILE__), inputFile.GetString());
 		//cout << __FILE__ "::LoadBitmapFromFile::image.Load(\""<<inputFile<<"\") failed.\r\n";
 		return true;
 	}
-	if (eOutputBitmapType == -1)
+	if(eOutputBitmapType == -1)
 	{
 		// Let's guess that it's BITMAP_TYPE_1BPP_VERTICAL always...
 		eOutputBitmapType = BITMAP_TYPE_1BPP_VERTICAL;
 	}
 
-	switch (eOutputBitmapType)
+	switch(eOutputBitmapType)
 	{
-	case BITMAP_TYPE_1BPP_IDEAL:
-	case BITMAP_TYPE_1BPP_VERTICAL:
-	case BITMAP_TYPE_16BPP_565:
-	case BITMAP_TYPE_18BPP_666:
-	case BITMAP_TYPE_24BPP_888:
-	case BITMAP_TYPE_32BPP_8888:
-	case BITMAP_TYPE_8BPP_PALETTE:
-		*pBitmap = gfx_bmp_CreateBitmap(eOutputBitmapType, image.GetWidth(), image.GetHeight());
-		break;
-	default:
-		*pBitmap = NULL;
-		break;
+		case BITMAP_TYPE_1BPP_IDEAL:
+		case BITMAP_TYPE_1BPP_VERTICAL:
+		case BITMAP_TYPE_16BPP_565:
+		case BITMAP_TYPE_18BPP_666:
+		case BITMAP_TYPE_24BPP_888:
+		case BITMAP_TYPE_32BPP_8888:
+		case BITMAP_TYPE_8BPP_PALETTE:
+			*pBitmap = gfx_bmp_CreateBitmap(eOutputBitmapType, image.GetWidth(), image.GetHeight());
+			break;
+		default:
+			*pBitmap = NULL;
+			break;
 	}
 
 	if (*pBitmap == NULL) {
-		wprintf(L"%Ts :: LoadBitmapFromFile :: unsupported Bitmap type.\r\n", TEXT(__FILE__));
+		wprintf(TEXT("%s :: LoadBitmapFromFile :: unsupported Bitmap type.\r\n"), TEXT(__FILE__));
 		return true;
 	}
 
@@ -798,4 +889,237 @@ bool CLCDBitmapCreatorDlg::LoadBitmapFromFile(CString& inputFile, gfx_BitmapType
 		}
 	}
 	return false;
+}
+
+
+//-----------------------------------------------------------------------------
+//  AppendToLog()
+///
+/// \brief	Add a string to the log window at the current position and scroll
+///			by the number of inserted lines (the naive solution for
+///			auto-scrolling).
+///
+/// The string is added to the log starting at the current position,
+/// i.e. without starting a new line. Then the control scrolls down by the
+/// number of lines inserted.
+/// The string is displayed in the specified text color.
+/// The string may be a multiline string using carriage return/line feed
+/// (i.e. newline) characters to indicate a line breaks.
+///
+/// The scrolling mechanism used here is kind of naive, because it assumes
+/// that the user did not touch the scroll bars and that the scroll position
+/// is always the end of the text. However, this is not the general case.
+/// In general, we need to assume that the current scrolling position is
+/// unkown. A solution for that is shown in the AppendToLogAndScroll()
+/// method.
+///
+/// \param [in]		str		The string to add to the message log.
+/// \param [in]		color	The text color of the string. You may use the
+///							RGB(r,g,b) macro to specify the color byte-wise.
+/// \return					An integer indicating sucess or failure:
+///							- 0, if the function succeeded.
+///							- (-1), if the function failed.
+///							(This function always returns 0, because no
+///							parameter or failure checking is done.)
+///
+/// \remark
+/// Support for adding multiline strings requires the ES_MULTILINE style
+/// to be set.
+/// If you are not using the Visual Studio Wizards but create the control
+/// indirectly using the Create() method, you should use the following
+/// style: WS_CHILD|WS_VSCROLL|WS_HSCROLL|ES_MULTILINE|ES_READONLY.
+///
+/// \sa AppendToLogAndScroll()
+//-----------------------------------------------------------------------------
+int CLCDBitmapCreatorDlg::AppendToLog(CString str, COLORREF color)
+{
+	int nOldLines = 0, nNewLines = 0, nScroll = 0;
+	long nInsertionPoint = 0;
+	CHARRANGE cr;
+	CHARFORMAT cf;
+
+	// Save number of lines before insertion of new text
+	nOldLines = m_ctrlLog.GetLineCount();
+
+	// Initialize character format structure
+	cf.cbSize = sizeof(CHARFORMAT);
+	cf.dwMask = CFM_COLOR;
+	cf.dwEffects = 0;	// To disable CFE_AUTOCOLOR
+	cf.crTextColor = color;
+
+	// Set insertion point to end of text
+	nInsertionPoint = m_ctrlLog.GetWindowTextLength();
+	/*if (nInsertionPoint > 800)
+	{
+		// Delete first half of text to avoid running into the 64k limit
+		m_ctrlLog.SetSel(0, nInsertionPoint / 2);
+		m_ctrlLog.ReplaceSel("");
+		UpdateData(FALSE);
+	}*/
+	nInsertionPoint = -1;
+	m_ctrlLog.SetSel(nInsertionPoint, -1);
+
+	//  Set the character format
+	m_ctrlLog.SetSelectionCharFormat(cf);
+
+	// Replace selection. Because we have nothing selected, this will simply insert
+	// the string at the current caret position.
+	m_ctrlLog.ReplaceSel(str);
+
+	// Get new line count
+	nNewLines = m_ctrlLog.GetLineCount();
+
+	// Scroll by the number of lines just inserted
+	nScroll = nNewLines - nOldLines;
+	m_ctrlLog.LineScroll(nScroll);
+
+	return 0;
+}
+
+
+//-----------------------------------------------------------------------------
+//  AppendToLogAndScroll()
+///
+/// \brief	Add a string to the serial log window at the current position,
+///			then scroll to the end of the text such that the last line of
+///			the text is shown at the bottom of the CRichEditCtrl.
+///
+/// The string is added to the message log starting at the current position,
+/// i.e. without starting a new line. Then the control scrolls down to show
+/// as much text as possible, including the last line of text at the very
+/// bottom.
+/// The string is displayed in the specified text color.
+/// The string may be a multiline string using carriage return/line feed
+/// (i.e. newline) characters to indicate a line breaks.
+///
+/// \param [in]		str		The string to add to the message log.
+/// \param [in]		color	The text color of the string. You may use the
+///							RGB(r,g,b) macro to specify the color byte-wise.
+/// \return					An integer indicating sucess or failure:
+///							- 0, if the function succeeded.
+///							- (-1), if the function failed.
+///							(This function always returns 0, because no
+///							parameter or failure checking is done.)
+///
+/// \remark
+/// The automatic scrolling function would be easy, if the MFC documentation
+/// was correct. Unfortunetely, it is not as trivial as one might think.
+/// If the CRichEditCtrl has the focus, it scrolls automatically if you
+/// insert text programatically. If it does not have the focus, it does not
+/// scroll automatically, so in that case you can use the LineScroll()
+/// method and you get the results you would expect when reading the MFC docs.
+/// This is true even if ES_AUTOxSCROLL style is NOT set.
+///
+/// So the point is to check in the AppendToLogAndScroll() method if the
+/// affected CRichEditCtrl has the focus. If so, we must not call
+/// LineScroll(). If not, it is safe to call LineSroll() to first scroll to
+/// the very end, which means that the last line of text is shown at the top
+/// of the CRichEditCtrl.
+/// Then we call LineScroll() a second time, this time scrolling back by
+/// the number of visible lines. This leads to having the last line of the
+/// text being displayed at the bottom of CRichEditCtrl.
+///
+/// Please note that in this sample application, the CRichEditCtrl never has
+/// the focus, because we always have to click a button in order to insert
+/// text. However, if you are using the code in an application not based on
+/// a dialog and that fills up the control where the user could have set focus
+/// to the control first, this method would fail to scroll correctly without
+/// checking the focus.
+/// I used this code in an MDI application, and there the control claims
+/// to have the focus if I click into the control before clicking a menu
+/// command (whatever the reason might be why in that case the focus is
+/// not lost to the menu command).
+///
+/// Please note that the code is written for maximum comprehension / good
+/// readability, not for code or execution efficiency.
+//-----------------------------------------------------------------------------
+int CLCDBitmapCreatorDlg::AppendToLogAndScroll(CString str, COLORREF color)
+{
+	long nVisible = 0;
+	long nInsertionPoint = 0;
+	CHARFORMAT cf;
+
+	// Initialize character format structure
+	cf.cbSize = sizeof(CHARFORMAT);
+	cf.dwMask = CFM_COLOR;
+	cf.dwEffects = 0; // To disable CFE_AUTOCOLOR
+
+	cf.crTextColor = color;
+
+	// Set insertion point to end of text
+	nInsertionPoint = m_ctrlLog.GetWindowTextLength();
+	m_ctrlLog.SetSel(nInsertionPoint, -1);
+
+	// Set the character format
+	m_ctrlLog.SetSelectionCharFormat(cf);
+
+	// Replace selection. Because we have nothing
+	// selected, this will simply insert
+	// the string at the current caret position.
+	m_ctrlLog.ReplaceSel(str);
+
+	// Get number of currently visible lines or maximum number of visible lines
+	// (We must call GetNumVisibleLines() before the first call to LineScroll()!)
+	nVisible = GetNumVisibleLines(&m_ctrlLog);
+
+	// Now this is the fix of CRichEditCtrl's abnormal behaviour when used
+	// in an application not based on dialogs. Checking the focus prevents
+	// us from scrolling when the CRichEditCtrl does so automatically,
+	// even though ES_AUTOxSCROLL style is NOT set.
+	if (&m_ctrlLog != m_ctrlLog.GetFocus())
+	{
+		m_ctrlLog.LineScroll(INT_MAX);
+		m_ctrlLog.LineScroll(1 - nVisible);
+	}
+
+	return 0;
+}
+
+
+//-----------------------------------------------------------------------------
+//  GetNumVisibleLines()
+///
+/// \brief	Returns the number of lines that are currently visible in the
+///			client area of the given CRichEditCtrl.
+///
+/// 
+///
+/// \param [in]		pCtrl	Pointer to the CRichEditCtrl object to query.
+///
+/// \return					The number of currently visible lines.
+///
+/// \remark
+/// The code is written for best comprehension / readability, not for code
+/// or execution efficiency.
+//-----------------------------------------------------------------------------
+int CLCDBitmapCreatorDlg::GetNumVisibleLines(CRichEditCtrl* pCtrl)
+{
+	CRect rect;
+	long nFirstChar, nLastChar;
+	long nFirstLine, nLastLine;
+
+	// Get client rect of rich edit control
+	pCtrl->GetClientRect(rect);
+
+	// Get character index close to upper left corner
+	nFirstChar = pCtrl->CharFromPos(CPoint(0, 0));
+
+	// Get character index close to lower right corner
+	nLastChar = pCtrl->CharFromPos(CPoint(rect.right, rect.bottom));
+	if (nLastChar < 0)
+	{
+		nLastChar = pCtrl->GetTextLength();
+	}
+
+	// Convert to lines
+	nFirstLine = pCtrl->LineFromChar(nFirstChar);
+	nLastLine = pCtrl->LineFromChar(nLastChar);
+
+	return (nLastLine - nFirstLine);
+}
+
+void CLCDBitmapCreatorDlg::OnBnClickedCancel()
+{
+	if (CanExit())
+		CDialogEx::OnCancel();
 }

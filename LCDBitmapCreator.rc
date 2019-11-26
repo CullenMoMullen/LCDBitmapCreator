@@ -1,7 +1,5 @@
 // Microsoft Visual C++ generated resource script.
 //
-#pragma code_page(65001)
-
 #include "resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
@@ -23,6 +21,7 @@
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -56,10 +55,8 @@ BEGIN
     "LANGUAGE 9, 1\r\n"
     "#include ""res\\LCDBitmapCreator.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
     "#include ""afxres.rc""      // Standard components\r\n"
-    "#if !defined(_AFXDLL)\r\n"
-    "#include ""afxribbon.rc""   // MFC ribbon and control bar resources\r\n"
     "#endif\r\n"
-    "#endif\r\n"
+    "1 TYPELIB ""LCDBitmapCreator.tlb""\r\n"
     "\0"
 END
 
@@ -92,22 +89,23 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
 END
 
-IDD_LCDBITMAPCREATOR_DIALOG DIALOGEX 0, 0, 672, 264
-STYLE DS_SETFONT | DS_3DLOOK | DS_FIXEDSYS | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
-EXSTYLE WS_EX_ACCEPTFILES | WS_EX_TOOLWINDOW | WS_EX_STATICEDGE | WS_EX_APPWINDOW
+IDD_LCDBITMAPCREATOR_DIALOG DIALOGEX 0, 0, 672, 384
+STYLE DS_SETFONT | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_APPWINDOW
 CAPTION "LCD Bittmap Creator"
-FONT 10, "MS Shell Dlg", 400, 0, 0x0
+FONT 12, "Microsoft Sans Serif", 400, 0, 0x0
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,6,240,50,14
-    CONTROL         "",IDC_DRAW_CTRL,"Static",SS_OWNERDRAW | WS_BORDER,429,23,234,214
-    CONTROL         "",IDC_LIST_FILES,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,175,23,245,215,WS_EX_ACCEPTFILES
-    LTEXT           "Files to Generate Bitmaps From:",IDC_STATIC_FILES_TO_CONVERT,175,9,114,8
-    DEFPUSHBUTTON   "+",IDC_BUTTON_OPEN,405,7,15,14
+    PUSHBUTTON      "OK",IDOK,6,362,50,14
+    CONTROL         "",IDC_DRAW_CTRL,"Static",SS_OWNERDRAW | WS_BORDER,426,23,234,214
+    CONTROL         "",IDC_LIST_FILES,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,173,23,244,215,WS_EX_ACCEPTFILES
+    LTEXT           "Files to Generate Bitmaps From:",IDC_STATIC_FILES_TO_CONVERT,174,10,114,8
+    DEFPUSHBUTTON   "+",IDC_BUTTON_OPEN,402,9,15,14
     PUSHBUTTON      "Export C Structs",IDC_BUTTON_EXPORT,271,240,63,14
-    CONTROL         "",IDC_MFCPROPERTYGRIDSELBMP,"MfcPropertyGrid",WS_BORDER | WS_TABSTOP | 0x100,6,23,160,215
-    PUSHBUTTON      "Cancel",IDCANCEL,116,240,50,14
-    LTEXT           "Image Preview",IDC_STATIC_IMG_PREVIEW,429,9,58,8
-    LTEXT           "Bitmap Settings:",IDC_STATIC_BMP_SETTINGS,6,9,68,8
+    CONTROL         "",IDC_MFCPROPERTYGRIDSELBMP,"MfcPropertyGrid",WS_BORDER | WS_TABSTOP | 0x100,6,23,160,337
+    PUSHBUTTON      "Cancel",IDCANCEL,116,363,50,14
+    LTEXT           "Image Preview",IDC_STATIC_IMG_PREVIEW,427,10,58,8
+    LTEXT           "Bitmap Settings:",IDC_STATIC_BMP_SETTINGS,7,10,68,8
+    CONTROL         "",IDC_RICHEDIT_LOG_CTRL,"RichEdit50W",WS_BORDER | WS_VSCROLL | WS_GROUP | WS_TABSTOP | 0x1904,166,263,497,97
 END
 
 
@@ -169,9 +167,18 @@ BEGIN
     IDD_LCDBITMAPCREATOR_DIALOG, DIALOG
     BEGIN
         LEFTMARGIN, 6
-        RIGHTMARGIN, 665
+        RIGHTMARGIN, 663
+        VERTGUIDE, 166
+        VERTGUIDE, 173
+        VERTGUIDE, 417
+        VERTGUIDE, 426
         TOPMARGIN, 7
-        BOTTOMMARGIN, 257
+        BOTTOMMARGIN, 377
+        HORZGUIDE, 9
+        HORZGUIDE, 23
+        HORZGUIDE, 237
+        HORZGUIDE, 240
+        HORZGUIDE, 360
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -188,6 +195,7 @@ BEGIN
     0, 0, 0, 0,
     0, 0, 100, 100,
     0, 0, 0, 100,
+    0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0,
@@ -261,16 +269,14 @@ END
 #define _AFX_NO_SPLITTER_RESOURCES
 #define _AFX_NO_OLE_RESOURCES
 #define _AFX_NO_TRACKER_RESOURCES
-#define _AFX_NO_PROPERTY_RESOURCES
+//#define _AFX_NO_PROPERTY_RESOURCES
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE 9, 1
 #include "res\LCDBitmapCreator.rc2"  // non-Microsoft Visual C++ edited resources
 #include "afxres.rc"      // Standard components
-#if !defined(_AFXDLL)
-#include "afxribbon.rc"   // MFC ribbon and control bar resources
 #endif
-#endif
+1 TYPELIB "LCDBitmapCreator.tlb"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED

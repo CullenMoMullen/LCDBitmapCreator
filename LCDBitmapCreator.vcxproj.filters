@@ -21,6 +21,9 @@
     <ClInclude Include="LCDBitmapCreatorDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DlgProxy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="framework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -34,18 +37,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MultiSelectFileList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="components\runtime\runtime.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="components\lru\lru.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="components\handlealloc\handlealloc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="components\gfx\gfx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="os\filesystem\fsapi.h">
@@ -63,25 +54,7 @@
     <ClInclude Include="stdint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="components\lru\lru_errordefs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="components\middleware_errordefs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="components\middleware_subgroups.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="groups.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="components\gfx\gfx_format.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="components\gfx\gfx_rsrcfont.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="components\gfx\gfx_internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="os\errordefs.h">
@@ -99,28 +72,10 @@
     <ClInclude Include="os\filesystem\fsproj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="drivers\media\ddi_media.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="drivers\media\ddi_media_errordefs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="drivers\ddi_errordefs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="drivers\ddi_subgroups.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="drivers\media\drive_tags.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CMyStatic.h">
+    <ClInclude Include="types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CBitmapCreatorProperties.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -129,6 +84,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LCDBitmapCreatorDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgProxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
@@ -187,19 +145,27 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <Midl Include="LCDBitmapCreator.idl">
+      <Filter>Source Files</Filter>
+    </Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LCDBitmapCreator.reg" />
+    <None Include="res\LCDBitmapCreator.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
     <ResourceCompile Include="LCDBitmapCreator.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\LCDBitmapCreator.rc2">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="LCDBitmapCreator.aps" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="res\LCDBitmapCreator.ico">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="res\LCDBitmapCreator.manifest" />
   </ItemGroup>
 </Project>

@@ -11,7 +11,7 @@
 #ifndef _DDI_SUBGROUPS_H
 #define _DDI_SUBGROUPS_H
 
-#include "groups.h"
+#include "..\groups.h"
 
 //commented out codes that are not being used at all right now.
 

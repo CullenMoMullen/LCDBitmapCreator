@@ -8,7 +8,6 @@ CBitmapCreatorProperties::~CBitmapCreatorProperties()
 
 }
 
-
 CBitmapCreatorProperties::CBitmapCreatorProperties()
 {
 	m_PropOutputSingleFile = false;
@@ -16,6 +15,7 @@ CBitmapCreatorProperties::CBitmapCreatorProperties()
 	m_PropSelBmpBpp = 0;
 	m_PropSelBmpHeight = 0;
 	m_PropSelBmpWidth = 0;
+	m_PropSelBmpFilePath = TEXT("");
 }
 
 int CBitmapCreatorProperties::getPropOutputType() const
@@ -66,4 +66,16 @@ int CBitmapCreatorProperties::getPropSelBmpBpp() const
 void CBitmapCreatorProperties::setPropSelBmpBpp(int bpp)
 {
 	m_PropSelBmpBpp = bpp;
+}
+
+CString CBitmapCreatorProperties::getPropSelBmpFilePath() const
+{
+	return m_PropSelBmpFilePath;
+}
+
+void CBitmapCreatorProperties::setPropSelBmpFilePath(CString filePath)
+{
+	if (!filePath.IsEmpty()) {
+		m_PropSelBmpFilePath = filePath;
+	}
 }

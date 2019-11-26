@@ -23,9 +23,10 @@ public:
 // Overrides
 public:
 	virtual BOOL InitInstance();
+	virtual int ExitInstance();
 
 // Implementation
-protected:
+
 	DECLARE_MESSAGE_MAP()
 };
 

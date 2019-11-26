@@ -15,7 +15,7 @@
 //! \brief Macro used to indicate an invalid handle for memory allocated through the handle alloc module.
 #define INVALID_HANDLE 0
 
-#include "types.h"
+#include "../../types.h"
 
 #define HANDLE_POOL_GROWTH_SIZE 128
 

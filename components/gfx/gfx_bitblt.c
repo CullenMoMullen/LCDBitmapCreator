@@ -21,7 +21,7 @@
 #include "types.h"
 #include "components/gfx/gfx.h"
 #include "components/gfx/gfx_format.h"
-#include "gfx_internal.h"
+#include "components/gfx/gfx_internal.h"
 #include "os/os_resource_api.h"
 #include "components/handlealloc/handlealloc.h"
 #include "components/lru/lru.h"

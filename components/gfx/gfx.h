@@ -23,9 +23,9 @@
 #define UINT64 SDK_UINT64
 #endif
 
-#include "types.h"
-#include "components/handlealloc/handlealloc.h"
-#include "components/lru/lru.h"
+#include "../../types.h"
+#include "../../components/handlealloc/handlealloc.h"
+#include "../../components/lru/lru.h"
 
 #ifdef _WIN32
 #undef BOOL

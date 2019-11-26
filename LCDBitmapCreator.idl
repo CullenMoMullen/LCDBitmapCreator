@@ -1,0 +1,29 @@
+// LCDBitmapCreator.idl : type library source for LCDBitmapCreator.exe
+
+// This file will be processed by the MIDL compiler to produce the
+// type library (LCDBitmapCreator.tlb).
+
+[ uuid(f89b2e05-8fbe-4a73-9e06-bf6edd548d0b), version(1.0) ]
+library LCDBitmapCreator
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	//  Primary dispatch interface for LCDBitmapCreatorDoc
+
+	[ uuid(77099c85-7691-42d3-97b6-caf25e2211f5) ]
+	dispinterface ILCDBitmapCreator
+	{
+		properties:
+
+		methods:
+	};
+
+	//  Class information for LCDBitmapCreatorDoc
+
+	[ uuid(F3848AD0-07AB-4126-8634-56AE68544DC2)]
+	coclass LCDBitmapCreator
+	{
+		[default] dispinterface ILCDBitmapCreator;
+	};
+};

@@ -11,7 +11,7 @@
 #ifndef _DDI_ERRORDEFS_H
 #define _DDI_ERRORDEFS_H
 
-#include "errordefs.h"
+#include "..\os\errordefs.h"
 #include "ddi_subgroups.h"
 
 #define ERROR_DDI_UART_DEBUG_GROUP      (ERROR_MASK |DDI_UART_DEBUG_GROUP)

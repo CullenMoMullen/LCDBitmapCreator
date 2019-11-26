@@ -16,7 +16,7 @@
 #ifndef _DDI_MEDIA_ERRORDEFS_H
 #define _DDI_MEDIA_ERRORDEFS_H
 
-#include "drivers/ddi_errordefs.h"
+#include "..\..\drivers/ddi_errordefs.h"
 
 //! \addtogroup ddi_media
 //! @{

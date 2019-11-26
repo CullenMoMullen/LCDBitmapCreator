@@ -204,14 +204,14 @@ public:
 		// Copy the path. This can be NULL; see Init() for details.
 		if (pPath)
 		{
-			memcpy(psz, pPath, cchPath * sizeof(TCHAR));
+			memcpy_s(psz, cch * sizeof(TCHAR), pPath, cchPath * sizeof(TCHAR));
 			//RtlCopyMemory(psz, pPath, cchPath * sizeof(TCHAR));
 		}
 
 		// Add the trailing back slash if needed.
 		if (bAddTrailingSlash)
 		{
-			psz[cchPath] = TEXT('\\');
+			psz[cchPath] = '\\';
 		}
 
 		// Copy the file name.

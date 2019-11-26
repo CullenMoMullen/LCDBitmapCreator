@@ -14,6 +14,7 @@ protected:
 	int m_PropSelBmpWidth;
 	int m_PropSelBmpHeight;
 	int m_PropSelBmpBpp;
+	CString m_PropSelBmpFilePath;
 
 
 public:
@@ -34,6 +35,9 @@ public:
 
 	int getPropSelBmpBpp() const;
 	void setPropSelBmpBpp(int bpp);
+
+	CString getPropSelBmpFilePath() const;
+	void setPropSelBmpFilePath(CString filePath);
 
 };
 

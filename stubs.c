@@ -8,27 +8,27 @@
 #include "components/lru/lru.h"
 #include "os/filesystem/fsapi.h"
 #include <stdlib.h>
-#include  <memory.h>
+#include <memory.h>
 
 gfx_Globals_t g_gfx_Globals;
 
 gfx_Color_t g_Pallete[16] = {
-									COLOR_BLACK,
-									COLOR_WHITE,
-									COLOR_TEAL,
-									COLOR_PURPLE,
-									COLOR_BLUE,
-									COLOR_LIGHT_GRAY,
-									COLOR_DARK_GRAY,
-									COLOR_DARK_TEAL,
-									COLOR_DARK_PURPLE,
-									COLOR_DARK_BLUE,
-									COLOR_YELLOW,
-									COLOR_GREEN,
-									COLOR_DARK_YELLOW,
-									COLOR_DARK_GREEN,
-									COLOR_RED,
-									COLOR_DARK_RED
+	COLOR_BLACK,
+	COLOR_WHITE,
+	COLOR_TEAL,
+	COLOR_PURPLE,
+	COLOR_BLUE,
+	COLOR_LIGHT_GRAY,
+	COLOR_DARK_GRAY,
+	COLOR_DARK_TEAL,
+	COLOR_DARK_PURPLE,
+	COLOR_DARK_BLUE,
+	COLOR_YELLOW,
+	COLOR_GREEN,
+	COLOR_DARK_YELLOW,
+	COLOR_DARK_GREEN,
+	COLOR_RED,
+	COLOR_DARK_RED
 };
 
 REENTRANT RtStatus_t Fclose(int32_t HandleNumber) {

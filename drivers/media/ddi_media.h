@@ -18,7 +18,7 @@
 #ifndef _DDI_MEDIA_H
 #define _DDI_MEDIA_H
 
-#include <types.h>
+#include "..\..\types.h"
 #include "ddi_media_errordefs.h"
 #include "drive_tags.h"
 

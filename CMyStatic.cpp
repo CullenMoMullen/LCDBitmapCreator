@@ -78,7 +78,7 @@ void CMyStatic::DrawItem(LPDRAWITEMSTRUCT pdi)
 	else {
 		RECT clRect{ 0 };
 		this->GetClientRect(&clRect);
-		HBRUSH br = ::CreateSolidBrush(RGB(0x33, 0x33, 0x33));
+		HBRUSH br = ::CreateSolidBrush(D3DCOLOR_RGBA(10,50,200,125));
 		HBRUSH oldbr = (HBRUSH) ::SelectObject(pdi->hDC, br);
 		::FillRect(pdi->hDC, &clRect, br);
 		::SelectObject(pdi->hDC, oldbr);

@@ -1,7 +1,7 @@
 #ifndef _MIDDLEWARE_ERRORDEFS_H
 #define _MIDDLEWARE_ERRORDEFS_H
 
-#include "errordefs.h"
+#include "../os/errordefs.h"
 #include "middleware_subgroups.h"
 //commented out codes are ones that are not being used at all right now.
 
