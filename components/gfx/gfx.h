@@ -14,7 +14,7 @@
 
 #ifdef _WIN32
 //warning 4200 is "A structure or union contains an array with zero size."
-//we use this in gfx_Bitmap_t.
+//we use this in gfx_Bmp_t.
 #pragma warning(disable: 4200)
 #pragma warning(disable: 4068)
 #define BOOL SDK_BOOL
@@ -23,9 +23,9 @@
 #define UINT64 SDK_UINT64
 #endif
 
-#include "../../types.h"
-#include "../../components/handlealloc/handlealloc.h"
-#include "../../components/lru/lru.h"
+#include "types.h"
+#include "components/handlealloc/handlealloc.h"
+#include "components/lru/lru.h"
 
 #ifdef _WIN32
 #undef BOOL
@@ -43,17 +43,17 @@ extern "C" {
 #undef RGB
 #endif
 
-//! \brief Macro that allows RGB (red, green, blues) values to be constructed.
-//!The RGB macro and RGBA macro can be used to create a native color.  The format for a native color
-//! is the following:
-//!
-//!    31      24|23     16|15      8|7       0
-//!     ---------------------------------------
-//!    |    A    |    B    |    G    |    R    |
-//!     ---------------------------------------
-//!
-//! RGB is used to define the color of a single pixel of image data.
-//! Combined, the intensities of Red, Green, and Blue components define a color.
+	//! \brief Macro that allows RGB (red, green, blues) values to be constructed.
+	//!The RGB macro and RGBA macro can be used to create a native color.  The format for a native color
+	//! is the following:
+	//!
+	//!    31      24|23     16|15      8|7       0
+	//!     ---------------------------------------
+	//!    |    A    |    B    |    G    |    R    |
+	//!     ---------------------------------------
+	//!
+	//! RGB is used to define the color of a single pixel of image data.
+	//! Combined, the intensities of Red, Green, and Blue components define a color.
 #define RGB(R,G,B)      ((((B) & 0xFF) << 16) | (((G) & 0xFF) << 8) | ((R) & 0xFF) | 0xff000000)
 //! \brief Macro used to define a color.
 //!
@@ -105,10 +105,10 @@ extern "C" {
 //! the alpha channel.  To define a color the RGB or RGBA macros should be used.
 //! Similarly GET_RED, GET_GREEN, GET_BLUE, and GET_ALPHA can be used to obtain
 //! the varioud components of a gfx_Color_t value.
-typedef uint32_t gfx_Color_t;
+	typedef uint32_t gfx_Color_t;
 
 
-//! \brief Standard defintion for the color white.
+	//! \brief Standard defintion for the color white.
 #define COLOR_WHITE         RGB(255,255,255)
 //! \brief Standard defintion for the color teal.
 #define COLOR_TEAL          RGB(0,255,255)
@@ -142,44 +142,44 @@ typedef uint32_t gfx_Color_t;
 #define COLOR_BLACK         RGB(0,0,0)
 
 //! Enum defining the encoding types for text strings
-typedef enum _txt_StringTypesEnum {
-	//! \brief Standard DBCS
-	TXT_STRING_TYPE_DBCS = 0,
-	//! \brief UTF16
-	TXT_STRING_TYPE_UTF16,
-	//! \brief UTF8/ASCII (It is recommended to treat ASCII strings as UTF-8 to avoid accessing the DBCS code page resources during conversion).
-	TXT_STRING_TYPE_UTF8
-} txt_StringTypesEnum_t;
+	typedef enum _txt_StringTypesEnum {
+		//! \brief Standard DBCS
+		TXT_STRING_TYPE_DBCS = 0,
+		//! \brief UTF16
+		TXT_STRING_TYPE_UTF16,
+		//! \brief UTF8/ASCII (It is recommended to treat ASCII strings as UTF-8 to avoid accessing the DBCS code page resources during conversion).
+		TXT_STRING_TYPE_UTF8
+	} txt_StringTypesEnum_t;
 
-//! Enum defining the orientation for text strings
-typedef enum _txt_StringOrientationEnum {
-	//! \brief Zero degree
-	GFX_ROTATE_0 = 0,
-	//! \brief 90 degree
-	GFX_ROTATE_90,
-	//! \brief 180 degree
-	GFX_ROTATE_180,
-	//! \brief 270 degree    
-	GFX_ROTATE_270
-} gfx_OrientationEnum_t;
+	//! Enum defining the orientation for text strings
+	typedef enum _txt_StringOrientationEnum {
+		//! \brief Zero degree
+		GFX_ROTATE_0 = 0,
+		//! \brief 90 degree
+		GFX_ROTATE_90,
+		//! \brief 180 degree
+		GFX_ROTATE_180,
+		//! \brief 270 degree    
+		GFX_ROTATE_270
+	} gfx_OrientationEnum_t;
 
 //! Enum defining the different bitmap types.
 typedef enum _gfx_BitmapTypeEnum
 {
 	//! \brief RGB Color with 5 bits red, 6 bits green, and 5 bits blue.
-	BITMAP_TYPE_16BPP_565 = 0,
+	BMP_TYPE_16BPP_565 = 0,
 	//! \brief Monochrome Color (1 bpp) with pixels arrange in row major ordering.
-	BITMAP_TYPE_1BPP_IDEAL,
+	BMP_TYPE_1BPP_IDEAL,
 	//! \brief RGB Color with 6 bits red, 6 bits green, and 6 bits blue.
-	BITMAP_TYPE_18BPP_666,
+	BMP_TYPE_18BPP_666,
 	//! \brief Monochrome Color (1 bpp) with pixels arrange in 8 bit column ordering.
-	BITMAP_TYPE_1BPP_VERTICAL,
+	BMP_TYPE_1BPP_VERTICAL,
 	//! \brief Total number of currently supported color encodings.
-	BITMAP_TYPE_8BPP_PALETTE,
-	BITMAP_TYPE_24BPP_888,
-	BITMAP_TYPE_32BPP_8888,
-	BITMAP_TYPE_INVALID,
-	BITMAP_TYPE_COUNT
+	BMP_TYPE_8BPP_PALETTE,
+	BMP_TYPE_24BPP_888,
+	BMP_TYPE_32BPP_8888,
+	BMP_TYPE_COUNT,
+	BMP_TYPE_INVALID,
 } gfx_BitmapTypeEnum_t;
 
 
@@ -194,7 +194,7 @@ typedef struct _gfx_Bitmap
 	unsigned uHeight : 12;
 	//! \brief Data of the bitmap
 	char     pData[];
-} gfx_Bitmap_t;
+} gfx_Bmp_t;
 
 
 //! Definition of a rectangle for the GFX library
@@ -218,7 +218,7 @@ typedef struct _gfx_Font
 	//! \brief Returns a character glyph for a font.
 	//! 
 	//! A common implementation for this function is to read the glyph from a resource file.  
-	gfx_Bitmap_t* (*GetGlyph)(struct _gfx_Font*, uint16_t, util_Handle_t*);
+	gfx_Bmp_t* (*GetGlyph)(struct _gfx_Font*, uint16_t, util_Handle_t*);
 	//! \brief Returns the height of the font characters.
 	uint8_t(*GetFontHeight)(struct _gfx_Font*);
 	//! \brief A function pointer that returns the glyph width
@@ -264,7 +264,7 @@ typedef struct _gfx_DeviceContext
 	//! \brief Stack of clipping regions saved to be restored at a later time                                    
 	gfx_ClipNode_t* pClippingStack;
 	//! \brief Destination of all the graphics operations on the device context. Can be smaller than DC size (if so frame slicing will be used).
-	gfx_Bitmap_t* pBitmap;
+	gfx_Bmp_t* pBitmap;
 	bool           bDirty;              //!< Indicates the DC has been drawn to
 	uint32_t       u32MaxFrameSizeInBytes;  //!< Maximum Frame Size in bytes
 	uint16_t       u16Width;            //!< Actual width in pixels of the DC
@@ -293,13 +293,13 @@ typedef struct _gfx_Globals
 
 extern gfx_Globals_t g_gfx_Globals;
 
-//! \brief Declares the size of a buffer in bytes to be used as a gfx_Bitmap_t (see \ref GFX_INIT_STATIC_BITMAP)
-#define GFX_BITMAP_BUFFER_SIZE(width, height, bytesPerPixel) (sizeof(gfx_Bitmap_t) + ((width) * (height) * (bytesPerPixel)))
+//! \brief Declares the size of a buffer in bytes to be used as a gfx_Bmp_t (see \ref GFX_INIT_STATIC_BITMAP)
+#define GFX_BITMAP_BUFFER_SIZE(width, height, bytesPerPixel) (sizeof(gfx_Bmp_t) + ((width) * (height) * (bytesPerPixel)))
 
-//! \brief Initializes a pointer to a statically declared gfx_Bitmap_t buffer (see \ref GFX_BITMAP_BUFFER_SIZE)
+//! \brief Initializes a pointer to a statically declared gfx_Bmp_t buffer (see \ref GFX_BITMAP_BUFFER_SIZE)
 #define GFX_INIT_STATIC_BITMAP(bitmapPtrName, bufferName, type, width, height)\
 do { \
-    (bitmapPtrName) = (gfx_Bitmap_t*) (bufferName); \
+    (bitmapPtrName) = (gfx_Bmp_t*) (bufferName); \
     (bitmapPtrName)->uType = (type); \
     (bitmapPtrName)->uWidth = (width); \
     (bitmapPtrName)->uHeight = (height); \
@@ -477,7 +477,7 @@ extern "C" {
 	//! \param[in] x0    X position (relative to current origin)
 	//! \param[in] y0    Y position (relative to current origin)
 	////////////////////////////////////////////////////////////////////////////////
-	void gfx_bmp_DrawBitmapByAddr(gfx_DeviceContext_t* pDC, gfx_Bitmap_t*, int x0, int y0);
+	void gfx_bmp_DrawBitmapByAddr(gfx_DeviceContext_t* pDC, gfx_Bmp_t*, int x0, int y0);
 
 	////////////////////////////////////////////////////////////////////////////////
 	//! \brief This  is the primary way a user of the graphics library can draw a bitmap into a device context.
@@ -490,7 +490,7 @@ extern "C" {
 	//! \param[in] *srcRect pointer to source rectangle to stretch from
 	//! \param[in] filterType Re-sampling filter to use for transformation (\ref gfx_StretchFilter_t)
 	////////////////////////////////////////////////////////////////////////////////
-	void gfx_bmp_StretchBitmapByAddr(gfx_DeviceContext_t* pDC, gfx_Rect_t* destRect, gfx_Bitmap_t* pSrc, gfx_Rect_t* srcRect, gfx_StretchFilter_t filterType);
+	void gfx_bmp_StretchBitmapByAddr(gfx_DeviceContext_t* pDC, gfx_Rect_t* destRect, gfx_Bmp_t* pSrc, gfx_Rect_t* srcRect, gfx_StretchFilter_t filterType);
 
 	////////////////////////////////////////////////////////////////////////////////
 	//! \brief Draws a bitmap by resource onto the gfx_DeviceContext_t at the specified location.
@@ -531,7 +531,7 @@ extern "C" {
 	//! \param[in] y0         Y position (relative to current origin)
 	//! \param[in] alphaValue Opacity value for the source bitmap
 	////////////////////////////////////////////////////////////////////////////////
-	void gfx_bmp_AlphaBlendBitmapByAddr(gfx_DeviceContext_t* pDC, gfx_Bitmap_t*, int x0, int y0, uint8_t alphaValue);
+	void gfx_bmp_AlphaBlendBitmapByAddr(gfx_DeviceContext_t* pDC, gfx_Bmp_t*, int x0, int y0, uint8_t alphaValue);
 
 	////////////////////////////////////////////////////////////////////////////////
 	//! \brief DAlpha blends a bitmap by resource onto the gfx_DeviceContext_t at the specified location.
@@ -557,7 +557,7 @@ extern "C" {
 	//!
 	//! \returns NULL
 	////////////////////////////////////////////////////////////////////////////////
-	void gfx_bmp_RotateBitmap(gfx_Color_t* pPalette, gfx_Bitmap_t* pSrc, gfx_Bitmap_t* pDest, gfx_OrientationEnum_t eOrientation);
+	void gfx_bmp_RotateBitmap(gfx_Color_t* pPalette, gfx_Bmp_t* pSrc, gfx_Bmp_t* pDest, gfx_OrientationEnum_t eOrientation);
 
 	////////////////////////////////////////////////////////////////////////////////
 	//! \brief Creates a bitmap from the handle allocation heap of specific size and format.
@@ -568,7 +568,7 @@ extern "C" {
 	//!
 	//! \returns Pointer to a bitmap structure
 	////////////////////////////////////////////////////////////////////////////////
-	gfx_Bitmap_t* gfx_bmp_CreateBitmap(unsigned char eBitmapType, uint16_t u16x, uint16_t u16y);
+	gfx_Bmp_t* gfx_bmp_CreateBitmap(unsigned char eBitmapType, uint16_t u16x, uint16_t u16y);
 
 	////////////////////////////////////////////////////////////////////////////////
 	//! \brief Draws a solid rectangle onto the current context, clipped by the active clipping region.
@@ -757,7 +757,7 @@ extern "C" {
 	//!
 	//! \return True if pixel is within the bitmap, false if not.
 	////////////////////////////////////////////////////////////////////////////////
-	bool gfx_bmp_GetPixel(gfx_Color_t* pPalette, gfx_Bitmap_t* pSrc, int x, int y, gfx_Color_t* pPixel);
+	bool gfx_bmp_GetPixel(gfx_Color_t* pPalette, gfx_Bmp_t* pSrc, int x, int y, gfx_Color_t* pPixel);
 
 	////////////////////////////////////////////////////////////////////////////////
 	//! \brief Sets a pixel's color value in a bitmap
@@ -774,22 +774,22 @@ extern "C" {
 	//!
 	//! \return True if pixel is within the bitmap, false if not.
 	////////////////////////////////////////////////////////////////////////////////
-	bool gfx_bmp_PutPixel(gfx_Color_t* pPalette, gfx_Bitmap_t* pSrc, int x, int y, gfx_Color_t uPixel);
+	bool gfx_bmp_PutPixel(gfx_Color_t* pPalette, gfx_Bmp_t* pSrc, int x, int y, gfx_Color_t uPixel);
 
 	////////////////////////////////////////////////////////////////////////////////
 	//! \brief Loads a bitmap from the resource file.
 	//!
-	//! Returns a pointer to a newly allocated gfx_Bitmap_t object after populating it with bitmap data from
+	//! Returns a pointer to a newly allocated gfx_Bmp_t object after populating it with bitmap data from
 	//! the resource file.
 	//!
 	//! \param[in] uResourceID Resource ID to load.
 	//! \param[in] pHndl Pointer to a handle to assign the handle for the memory allocated for the loaded resource.
 	//!
-	//! \return  Pointer to a newly allocated gfx_Bitmap_t object.
+	//! \return  Pointer to a newly allocated gfx_Bmp_t object.
 	//!
 	//! \note This bitmap is not under control of the bitmap caching system.
 	////////////////////////////////////////////////////////////////////////////////
-	gfx_Bitmap_t* gfx_rsrc_LoadBitmap(uint32_t uResourceID, util_Handle_t* pHndl);
+	gfx_Bmp_t* gfx_rsrc_LoadBitmap(uint32_t uResourceID, util_Handle_t* pHndl);
 
 	////////////////////////////////////////////////////////////////////////////////
 	//! \brief Initializes the Graphics component

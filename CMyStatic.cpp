@@ -63,7 +63,7 @@ void CMyStatic::DrawItem(LPDRAWITEMSTRUCT pdi)
 		
 		
 		::SetStretchBltMode(pdi->hDC, STRETCH_DELETESCANS);
-		::StretchBlt(pdi->hDC, 0, 0, w, h, dcMem, 0, 0, sourceWidth, sourceHeight, SRCCOPY);
+		::StretchBlt(pdi->hDC, x, y, w, h, dcMem, 0, 0, sourceWidth, sourceHeight, SRCCOPY);
 		//HPEN pn = ::CreatePen(PS_DASH, 1, RGB(100, 0, 0));
 		//::SelectObject(pdi->hDC, pn);
 		//::(pdi->hDC, 0, 8);

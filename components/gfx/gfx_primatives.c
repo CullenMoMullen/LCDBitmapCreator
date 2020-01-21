@@ -31,7 +31,7 @@
 //! \todo optimize:   the two branches (whether x or y is the incrementer) can be collapesed into one using
 //!                   pointers to the original data.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_2d_DrawClippedLineGeneric(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, int x0, int y0, int x1, int y1, gfx_Color_t color)
+void gfx_2d_DrawClippedLineGeneric(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, int x0, int y0, int x1, int y1, gfx_Color_t color)
 {
     bool bInvert = false;
     int dx, dy;
@@ -203,7 +203,7 @@ unsigned char gfx_GetPointsRegionCode(gfx_Rect_t *pClipRect, int x,int y)
 //! \todo This function may be excess functionality than required.  The typical usage of line drawing
 //!       in our system is horizontal or vertical lines, which are much simpler to clip.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_DrawLineSimple(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t *pClipRect, int x0, int y0, int x1, int y1, gfx_Color_t color)
+void gfx_DrawLineSimple(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t *pClipRect, int x0, int y0, int x1, int y1, gfx_Color_t color)
 {
     gfx_format_LineDraw_t *pDrawLine = gfx_format_GetLineDraw(pDest);
 

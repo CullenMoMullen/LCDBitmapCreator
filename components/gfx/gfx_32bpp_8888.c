@@ -20,9 +20,9 @@
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
 void gfx_bitblit_32BPP_8888(gfx_Color_t *pPalette,
-			    gfx_Bitmap_t *pDest,
+			    gfx_Bmp_t *pDest,
 			    gfx_Rect_t Rect,
-			    gfx_Bitmap_t *pSrc,
+			    gfx_Bmp_t *pSrc,
 			    int SourceXoffset,
 			    int SourceYoffset)
 {
@@ -54,9 +54,9 @@ void gfx_bitblit_32BPP_8888(gfx_Color_t *pPalette,
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
 void gfx_bitblit_32BPP_8888_To_16BPP_565(gfx_Color_t *pPalette,
-					 gfx_Bitmap_t *pDest,
+					 gfx_Bmp_t *pDest,
 					 gfx_Rect_t Rect,
-					 gfx_Bitmap_t *pSrc,
+					 gfx_Bmp_t *pSrc,
 					 int SourceXoffset,
 					 int SourceYoffset)
 {
@@ -103,7 +103,7 @@ void gfx_bitblit_32BPP_8888_To_16BPP_565(gfx_Color_t *pPalette,
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_PutPixel_32BPP_8888(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap, uint16_t u16x, uint16_t u16y, gfx_Color_t cRGB)
+void gfx_PutPixel_32BPP_8888(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap, uint16_t u16x, uint16_t u16y, gfx_Color_t cRGB)
 {
     uint32_t* pData;
     uint8_t alphaValue = GET_ALPHA(cRGB);
@@ -148,7 +148,7 @@ void gfx_PutPixel_32BPP_8888(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap, uint1
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
 void gfx_GetPixel_32BPP_8888(gfx_Color_t *pPalette,
-			     gfx_Bitmap_t *pBitmap,
+			     gfx_Bmp_t *pBitmap,
 			     uint16_t x,
 			     uint16_t y,
 			     gfx_Color_t *pRGB)
@@ -176,8 +176,8 @@ uint32_t gfx_GetDataSize_32BPP_8888(uint16_t u16x, uint16_t u16y)
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_alphablend_32BPP_888_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect,
-                              gfx_Bitmap_t *pSrc, int SourceXoffset, int SourceYoffset, 
+void gfx_alphablend_32BPP_888_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect,
+                              gfx_Bmp_t *pSrc, int SourceXoffset, int SourceYoffset, 
                               uint8_t alphaValue)
 {
     int x,y;

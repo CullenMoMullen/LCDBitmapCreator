@@ -11,7 +11,7 @@ CBitmapCreatorProperties::~CBitmapCreatorProperties()
 CBitmapCreatorProperties::CBitmapCreatorProperties()
 {
 	m_PropOutputSingleFile = false;
-	m_PropOutputType = BITMAP_TYPE_INVALID;
+	m_PropOutputType = BMP_TYPE_INVALID;
 	m_PropSelBmpBpp = 0;
 	m_PropSelBmpHeight = 0;
 	m_PropSelBmpWidth = 0;

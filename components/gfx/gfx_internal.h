@@ -15,6 +15,8 @@
 #ifndef __GFX_INTERNAL_H
 #define __GFX_INTERNAL_H
 
+#include "components/gfx/gfx.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -31,15 +33,15 @@ extern "C" {
 	//extern gfx_Globals_t g_gfx_Globals;
 
 	//Functions pointer tables choosing the right function
-	extern void (* const g_BitBltFunctions[BITMAP_TYPE_COUNT][BITMAP_TYPE_COUNT])(gfx_Color_t* pPalette, gfx_Bitmap_t*, gfx_Rect_t, gfx_Bitmap_t*, int, int);
-	extern void (* const g_GetPixelFunctions[])(gfx_Color_t* pPalette, gfx_Bitmap_t*, uint16_t, uint16_t, gfx_Color_t*);
-	extern void (* const g_PutPixelFunctions[])(gfx_Color_t* pPalette, gfx_Bitmap_t*, uint16_t, uint16_t, gfx_Color_t);
+	extern void (* const g_BitBltFunctions[BMP_TYPE_INVALID +1][BMP_TYPE_INVALID +1])(gfx_Color_t* pPalette, gfx_Bmp_t*, gfx_Rect_t, gfx_Bmp_t*, int, int);
+	extern void (* const g_GetPixelFunctions[])(gfx_Color_t* pPalette, gfx_Bmp_t*, uint16_t, uint16_t, gfx_Color_t*);
+	extern void (* const g_PutPixelFunctions[])(gfx_Color_t* pPalette, gfx_Bmp_t*, uint16_t, uint16_t, gfx_Color_t);
 
 	gfx_RectNode_t* gfx_clip_Get(void);
 	void gfx_clip_Release(gfx_RectNode_t* pNode);
 	gfx_RectNode_t* gfx_rect_Subtract(gfx_RectNode_t* pRectNode, gfx_Rect_t* pSubtractRect);
 
-	void gfx_DrawLineSimple(gfx_Color_t* pPalette, gfx_Bitmap_t* pDest, gfx_Rect_t* pClipRect, int x0, int y0,
+	void gfx_DrawLineSimple(gfx_Color_t* pPalette, gfx_Bmp_t* pDest, gfx_Rect_t* pClipRect, int x0, int y0,
 		int x1, int y1, gfx_Color_t color);
 
 	void gfx_blendline_16bpp_565(uint16_t* pSource, uint16_t* pDest, uint16_t uLineWidth, uint16_t alphaValue);

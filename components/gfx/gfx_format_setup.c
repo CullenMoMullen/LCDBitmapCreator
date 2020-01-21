@@ -19,42 +19,42 @@
 const gfx_BitmapFormat_t g_gfx_BitmapSupportTable[]=
 {
     {
-        BITMAP_TYPE_16BPP_565,
+        BMP_TYPE_16BPP_565,
         gfx_GetDataSize_16BPP_565,
         gfx_GetPixel_16BPP_565,
         gfx_PutPixel_16BPP_565,
         gfx_DrawClippedLine_16BPP_565
     },
     {
-        BITMAP_TYPE_1BPP_IDEAL,
+        BMP_TYPE_1BPP_IDEAL,
         gfx_GetDataSize_1BPP_Ideal,
         gfx_GetPixel_1BPP_Ideal,
         gfx_PutPixel_1BPP_Ideal,
         gfx_2d_DrawClippedLineGeneric
     },
     {
-        BITMAP_TYPE_18BPP_666,
+        BMP_TYPE_18BPP_666,
         gfx_GetDataSize_18BPP_666,
         gfx_GetPixel_18BPP_666,
         gfx_PutPixel_18BPP_666,
         gfx_DrawClippedLine_18BPP_666
     },
     {
-        BITMAP_TYPE_1BPP_VERTICAL,
+        BMP_TYPE_1BPP_VERTICAL,
         gfx_GetDataSize_1BPP_Vertical,
         gfx_GetPixel_1BPP_Vertical,
         gfx_PutPixel_1BPP_Vertical,
         gfx_2d_DrawClippedLineGeneric
     },
     {
-        BITMAP_TYPE_8BPP_PALETTE,
+        BMP_TYPE_8BPP_PALETTE,
         gfx_GetDataSize_8BPP_Palette,
         gfx_GetPixel_8BPP_Palette,
         gfx_PutPixel_8BPP_Palette,
         gfx_2d_DrawClippedLineGeneric
     },
     {
-        BITMAP_TYPE_24BPP_888,
+        BMP_TYPE_24BPP_888,
         gfx_GetDataSize_24BPP_888,
         gfx_GetPixel_24BPP_888,
         gfx_PutPixel_24BPP_888,
@@ -62,7 +62,7 @@ const gfx_BitmapFormat_t g_gfx_BitmapSupportTable[]=
     },
 #ifndef WIN32
     {
-        BITMAP_TYPE_16BPP_565_DD,
+        BMP_TYPE_16BPP_565_DD,
         gfx_GetDataSize_16BPP_565_dd,
         gfx_GetPixel_16BPP_565_dd,
         gfx_PutPixel_16BPP_565_dd,
@@ -70,7 +70,7 @@ const gfx_BitmapFormat_t g_gfx_BitmapSupportTable[]=
     },
 #endif
     {
-        BITMAP_TYPE_32BPP_8888,
+        BMP_TYPE_32BPP_8888,
         gfx_GetDataSize_32BPP_8888,
         gfx_GetPixel_32BPP_8888,
         gfx_PutPixel_32BPP_8888,
@@ -78,7 +78,7 @@ const gfx_BitmapFormat_t g_gfx_BitmapSupportTable[]=
     },
     //<! Insert new bitmap types here
     {
-        BITMAP_TYPE_COUNT,
+        BMP_TYPE_COUNT,
         NULL,
         NULL,
         NULL,
@@ -92,61 +92,61 @@ const gfx_BitmapFormat_t g_gfx_BitmapSupportTable[]=
 const gfx_format_BitBltEntry_t g_gfx_BitBltFunctions[]=
 {
     {
-        BITMAP_TYPE_16BPP_565,
-        BITMAP_TYPE_16BPP_565,
+        BMP_TYPE_16BPP_565,
+        BMP_TYPE_16BPP_565,
         gfx_bitblit_16BPP_565,
     },
     {
-        BITMAP_TYPE_1BPP_IDEAL,
-        BITMAP_TYPE_16BPP_565,
+        BMP_TYPE_1BPP_IDEAL,
+        BMP_TYPE_16BPP_565,
         gfx_bitblit_1BPP_Ideal_To_16BPP_565,
     },
     {
-        BITMAP_TYPE_18BPP_666,
-        BITMAP_TYPE_18BPP_666,
+        BMP_TYPE_18BPP_666,
+        BMP_TYPE_18BPP_666,
         gfx_bitblit_18BPP_666,
     },
     {
-        BITMAP_TYPE_8BPP_PALETTE,
-        BITMAP_TYPE_8BPP_PALETTE,
+        BMP_TYPE_8BPP_PALETTE,
+        BMP_TYPE_8BPP_PALETTE,
         gfx_bitblit_8BPP_Palette,
     },
     {
-        BITMAP_TYPE_8BPP_PALETTE,
-        BITMAP_TYPE_16BPP_565,
+        BMP_TYPE_8BPP_PALETTE,
+        BMP_TYPE_16BPP_565,
         gfx_bitblit_8BPP_Palette_To_16BPP_565,
     },
     {
-        BITMAP_TYPE_24BPP_888,
-        BITMAP_TYPE_24BPP_888,
+        BMP_TYPE_24BPP_888,
+        BMP_TYPE_24BPP_888,
         gfx_bitblit_24BPP_888,
     },
     {
-        BITMAP_TYPE_24BPP_888,
-        BITMAP_TYPE_16BPP_565,
+        BMP_TYPE_24BPP_888,
+        BMP_TYPE_16BPP_565,
         gfx_bitblit_24BPP_888_To_16BPP_565,
     },
 #ifndef WIN32
     {
-        BITMAP_TYPE_16BPP_565_DD,
-        BITMAP_TYPE_16BPP_565_DD,
+        BMP_TYPE_16BPP_565_DD,
+        BMP_TYPE_16BPP_565_DD,
         gfx_bitblit_16BPP_565_dd,
     },
     {
-        BITMAP_TYPE_16BPP_565,
-        BITMAP_TYPE_16BPP_565_DD,
+        BMP_TYPE_16BPP_565,
+        BMP_TYPE_16BPP_565_DD,
         gfx_bitblit_16BPP_565_dd,
     },
     {
-        BITMAP_TYPE_1BPP_IDEAL,
-        BITMAP_TYPE_16BPP_565_DD,
+        BMP_TYPE_1BPP_IDEAL,
+        BMP_TYPE_16BPP_565_DD,
         gfx_bitblit_1BPP_Ideal_To_16BPP_565_dd,
     },
 #endif
     //<! Insert new bitmap types here
     {
-        BITMAP_TYPE_COUNT,
-        BITMAP_TYPE_COUNT,
+        BMP_TYPE_COUNT,
+        BMP_TYPE_COUNT,
         NULL
     }
 };
@@ -157,31 +157,31 @@ const gfx_format_BitBltEntry_t g_gfx_BitBltFunctions[]=
 const gfx_format_AlphaBlendEntry_t g_gfx_AlphaBlendFunctions[]=
 {
     {
-        BITMAP_TYPE_16BPP_565,
-        BITMAP_TYPE_16BPP_565,
+        BMP_TYPE_16BPP_565,
+        BMP_TYPE_16BPP_565,
         gfx_alphablend_16BPP_565,
     },
 #ifndef WIN32
     {
-        BITMAP_TYPE_16BPP_565,
-        BITMAP_TYPE_16BPP_565_DD,
+        BMP_TYPE_16BPP_565,
+        BMP_TYPE_16BPP_565_DD,
         gfx_alphablend_16BPP_565_dd,
     },
     {
-        BITMAP_TYPE_16BPP_565_DD,
-        BITMAP_TYPE_16BPP_565_DD,
+        BMP_TYPE_16BPP_565_DD,
+        BMP_TYPE_16BPP_565_DD,
         gfx_alphablend_16BPP_565_dd,
     },
 #endif
     {
-        BITMAP_TYPE_32BPP_8888,
-        BITMAP_TYPE_16BPP_565,
+        BMP_TYPE_32BPP_8888,
+        BMP_TYPE_16BPP_565,
         gfx_alphablend_32BPP_888_To_16BPP_565,
     },
     //<! Insert new bitmap types here
     {
-        BITMAP_TYPE_COUNT,
-        BITMAP_TYPE_COUNT,
+        BMP_TYPE_COUNT,
+        BMP_TYPE_COUNT,
         NULL
     }
 };
@@ -193,8 +193,8 @@ const gfx_format_StretchBltEntry_t g_gfx_StretchBltFunctions[]=
 {
     //<! Insert new bitmap types here
     {
-        BITMAP_TYPE_COUNT,
-        BITMAP_TYPE_COUNT,
+        BMP_TYPE_COUNT,
+        BMP_TYPE_COUNT,
         NULL
     }
 };

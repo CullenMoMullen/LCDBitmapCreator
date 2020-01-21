@@ -13,15 +13,21 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\components">
+      <UniqueIdentifier>{1f2e6623-f1a8-406f-9473-bd7bb0b04c4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\components\gfx">
+      <UniqueIdentifier>{e71e468e-a7cb-4f42-b991-f02f5dab16de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\os">
+      <UniqueIdentifier>{b76c72c5-435c-4b93-8eab-a20befb8c658}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LCDBitmapCreator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LCDBitmapCreatorDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DlgProxy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="framework.h">
@@ -86,9 +92,6 @@
     <ClCompile Include="LCDBitmapCreatorDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DlgProxy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -145,12 +148,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="LCDBitmapCreator.idl">
-      <Filter>Source Files</Filter>
-    </Midl>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="LCDBitmapCreator.reg" />
     <None Include="res\LCDBitmapCreator.rc2">
       <Filter>Resource Files</Filter>
     </None>

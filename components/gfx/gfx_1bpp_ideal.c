@@ -19,7 +19,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_bitblit_1BPP_Ideal_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect, gfx_Bitmap_t *pSrc, int SourceXoffset, int SourceYoffset){
+void gfx_bitblit_1BPP_Ideal_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect, gfx_Bmp_t *pSrc, int SourceXoffset, int SourceYoffset){
     int x,y;
     unsigned char *pSourceOrigin;
     unsigned short *pDestOrigin;
@@ -70,7 +70,7 @@ void gfx_bitblit_1BPP_Ideal_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pD
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_PutPixel_1BPP_Ideal(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap, uint16_t x, uint16_t y, gfx_Color_t cRGB)
+void gfx_PutPixel_1BPP_Ideal(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap, uint16_t x, uint16_t y, gfx_Color_t cRGB)
 {
     unsigned char *pData = (unsigned char*)pBitmap->pData;
     unsigned char uByte = 1<<((8-(x%8))-1);
@@ -88,7 +88,7 @@ void gfx_PutPixel_1BPP_Ideal(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap, uint1
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_GetPixel_1BPP_Ideal(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap, uint16_t x, uint16_t y, gfx_Color_t *pRGB)
+void gfx_GetPixel_1BPP_Ideal(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap, uint16_t x, uint16_t y, gfx_Color_t *pRGB)
 {
     unsigned char *pData = (unsigned char*)pBitmap->pData;
     unsigned char uByte = 1<<((8-(x%8))-1);

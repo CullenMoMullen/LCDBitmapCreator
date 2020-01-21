@@ -25,7 +25,7 @@ uint32_t gfx_GetDataSize_1BPP_Vertical(uint16_t u16x, uint16_t u16y)
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_PutPixel_1BPP_Vertical(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap, uint16_t x, uint16_t y, gfx_Color_t cRGB)
+void gfx_PutPixel_1BPP_Vertical(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap, uint16_t x, uint16_t y, gfx_Color_t cRGB)
 {
     unsigned char *pData = (unsigned char*)pBitmap->pData;
     unsigned char uByte = (1<<(y&0x07));
@@ -42,7 +42,7 @@ void gfx_PutPixel_1BPP_Vertical(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap, ui
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_GetPixel_1BPP_Vertical(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap, uint16_t x, uint16_t y, gfx_Color_t *pRGB)
+void gfx_GetPixel_1BPP_Vertical(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap, uint16_t x, uint16_t y, gfx_Color_t *pRGB)
 {
     unsigned char *pData = (unsigned char*)pBitmap->pData;
     unsigned char uByte = (1<<(y&0x07));

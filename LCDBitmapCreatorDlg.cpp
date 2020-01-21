@@ -5,8 +5,6 @@
 #include "framework.h"
 #include "LCDBitmapCreator.h"
 #include "LCDBitmapCreatorDlg.h"
-#include "DlgProxy.h"
-#include "afxdialogex.h"
 #include <atlimage.h>
 
 #include "components/gfx/gfx.h"
@@ -16,7 +14,7 @@
 
 extern "C" gfx_Color_t g_Pallete[];
 extern "C" {
-	extern void gfx_bmp_DeleteBitmap(gfx_Bitmap_t* pBitmap);
+	extern void gfx_bmp_DeleteBitmap(gfx_Bmp_t* pBitmap);
 }
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -25,7 +23,7 @@ extern "C" {
 
 // CAboutDlg dialog used for App About
 
-class CAboutDlg : public CDialogEx
+class CAboutDlg : public CDialog
 {
 public:
 	CAboutDlg();
@@ -43,48 +41,40 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
+CAboutDlg::CAboutDlg() : CDialog(IDD_ABOUTBOX)
 {
 }
 
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	CDialog::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 END_MESSAGE_MAP()
 
 
-// CLCDBitmapCreatorDlg dialog
+//CLCDBitmapCreatorDlg dialog;
 
-IMPLEMENT_DYNAMIC(CLCDBitmapCreatorDlg, CDialogEx);
+//IMPLEMENT_DYNAMIC(CLCDBitmapCreatorDlg, CDialogEx);
 CLCDBitmapCreatorDlg::CLCDBitmapCreatorDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_LCDBITMAPCREATOR_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-	m_pAutoProxy = nullptr;
-}
-
-CLCDBitmapCreatorDlg::~CLCDBitmapCreatorDlg()
-{
-	// If there is an automation proxy for this dialog, set
-	//  its back pointer to this dialog to null, so it knows
-	//  the dialog has been deleted.
-	if (m_pAutoProxy != nullptr)
-		m_pAutoProxy->m_pDialog = nullptr;
+//	m_pAutoProxy = nullptr;
 }
 
 void CLCDBitmapCreatorDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST_FILES, FilesToGenerateListCtrl);
 	DDX_Control(pDX, IDC_DRAW_CTRL, BitmapCtrl);
 	DDX_Control(pDX, IDC_MFCPROPERTYGRIDSELBMP, selectBmpPropGrid);
-	DDX_Control(pDX, IDC_RICHEDIT_LOG_CTRL, m_ctrlLog);
+	//DDX_Control(pDX, IDC_RICHEDIT_LOG_CTRL, m_ctrlLog);
+	DDX_Control(pDX, IDC_RICHEDIT22, m_ctrlLog);
 }
 
-BEGIN_MESSAGE_MAP(CLCDBitmapCreatorDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CLCDBitmapCreatorDlg, CDialog)
 	ON_WM_SYSCOMMAND()
 	ON_WM_CLOSE()
 	ON_WM_PAINT()
@@ -101,7 +91,7 @@ END_MESSAGE_MAP()
 
 BOOL CLCDBitmapCreatorDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	CDialog::OnInitDialog();
 
 	// Add "About..." menu item to system menu.
 
@@ -139,13 +129,9 @@ BOOL CLCDBitmapCreatorDlg::OnInitDialog()
 	FilesToGenerateListCtrl.GetClientRect(&rect);
 	FilesToGenerateListCtrl.InsertColumn(0, TEXT("Images to convert"), 0, rect.right - rect.left);
 
-
-	//m_ctrlLog.SetBackgroundColor(false, COLOR_BLACK);
-
-	AppendToLog(TEXT("Application Started\nPress + button to choose files to convert\r\n"), COLOR_DARK_BLUE);
-
-	UpdateData(false);
-
+	//Pasting into the edit control allows us to see color properly.
+	AppendToLog(TEXT("Application Started\nPress + button to choose files to convert\r\n"), LOG_INFO_COLOR, RGB(0xFF,0xFF,0xFF));
+	AppendToLogAndScroll(TEXT("Application Started\nPress + button to choose files to convert\r\n"), LOG_INFO_COLOR, RGB(0xFF, 0xFF, 0xFF));
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -158,7 +144,7 @@ void CLCDBitmapCreatorDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 	else
 	{
-		CDialogEx::OnSysCommand(nID, lParam);
+		CDialog::OnSysCommand(nID, lParam);
 	}
 }
 
@@ -187,7 +173,7 @@ void CLCDBitmapCreatorDlg::OnPaint()
 	}
 	else
 	{
-		CDialogEx::OnPaint();
+		CDialog::OnPaint();
 	}
 }
 
@@ -198,30 +184,7 @@ HCURSOR CLCDBitmapCreatorDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-// Automation servers should not exit when a user closes the UI
-//  if a controller still holds on to one of its objects.  These
-//  message handlers make sure that if the proxy is still in use,
-//  then the UI is hidden but the dialog remains around if it
-//  is dismissed.
 
-//void CLCDBitmapCreatorDlg::OnCancel()
-//{
-//	if (CanExit())
-//		CDialogEx::OnCancel();
-//}
-BOOL CLCDBitmapCreatorDlg::CanExit()
-{
-	// If the proxy object is still around, then the automation
-	//  controller is still holding on to this application.  Leave
-	//  the dialog around, but hide its UI.
-	if (m_pAutoProxy != nullptr)
-	{
-		ShowWindow(SW_HIDE);
-		return FALSE;
-	}
-
-	return TRUE;
-}
 
 void CLCDBitmapCreatorDlg::OnBnClickedButtonOpen()
 {
@@ -283,12 +246,12 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonOpen()
 			FilesToGenerateListCtrl.InsertItem(0, pFileName, 0);
 			CString tmpStr;
 			tmpStr.Format(TEXT("File Added: %s successfully\r\n"), pFileName);
-			AppendToLogAndScroll(tmpStr, RGB(0, 128, 0));
+			AppendToLogAndScroll(tmpStr, LOG_VERBOSE_COLOR, RGB(0xFF, 0xFF, 0xFF));
 		}
 		else {
 			CString tmpStr;
 			tmpStr.Format(TEXT("WARNING: %s skipped as it is already included\r\n"), pFileName);
-			AppendToLogAndScroll(tmpStr, COLOR_DARK_YELLOW);
+			AppendToLogAndScroll(tmpStr, LOG_WARNING_COLOR, RGB(0xFF, 0xFF, 0xFF));
 		}
 
 		CoTaskMemFree(pFileName);
@@ -343,7 +306,7 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 	// TODO: Add your control notification handler code here
 	CImage img;
 	bool ret = 0;
-	gfx_Bitmap_t* outbmp = NULL;
+	gfx_Bmp_t* outbmp = NULL;
 	OPENFILENAME ofn;
 	SHORT numFiles = FilesToGenerateListCtrl.GetItemCount();
 
@@ -359,7 +322,7 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 
 	gfx_BitmapTypeEnum_t outputFormat = (gfx_BitmapTypeEnum_t) props.getPropOutputType();
 	//selectBmpPropGrid.GetProperty(OUTPUT_IMG_GRID_GROUP_IDX)->GetSubItem(OUTPUT_IMG_BPP_GRID_IDX);//pGroup1->GetSubItem(0)->AllowEdit(FALSE);
-	if (outputFormat == BITMAP_TYPE_INVALID) {
+	if (outputFormat == BMP_TYPE_INVALID) {
 		MessageBox(
 			TEXT("You must select an output format\nfor the generated C code!"),
 			TEXT("User Input Required"),
@@ -472,7 +435,7 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 			if (outbmp != NULL) {
 				CString tmpStr;
 				tmpStr.Format(TEXT("Created array %s in %s\r\n"), arrName.GetString(), outfilename.GetString());
-				AppendToLogAndScroll(tmpStr,RGB(0,0,0));
+				AppendToLogAndScroll(tmpStr,LOG_VERBOSE_COLOR, RGB(0xFF, 0xFF, 0xFF));
 				//LogCtrl.GetScrollBarCtrl()
 				gfx_bmp_DeleteBitmap(outbmp);
 			}
@@ -490,18 +453,18 @@ void CLCDBitmapCreatorDlg::OnBnClickedButtonExport()
 void CLCDBitmapCreatorDlg::InitBmpStrEnumMap(void)
 {
 	//creates a mapping between text shown in dropdown and the enum type in our graphics library
-	bmpTypesMap.Add(TEXT("BITMAP_1BPP_IDEAL"), BITMAP_TYPE_1BPP_IDEAL);
-	bmpTypesMap.Add(TEXT("BITMAP_1BPP_VERTICAL"), BITMAP_TYPE_1BPP_VERTICAL);
-	bmpTypesMap.Add(TEXT("BITMAP_8BPP_PALETTE"), BITMAP_TYPE_8BPP_PALETTE);
-	bmpTypesMap.Add(TEXT("BITMAP_16BPP_565"), BITMAP_TYPE_16BPP_565);
-	bmpTypesMap.Add(TEXT("BITMAP_18BPP_666"), BITMAP_TYPE_18BPP_666);
-	bmpTypesMap.Add(TEXT("BITMAP_24BPP_888"), BITMAP_TYPE_24BPP_888);
-	bmpTypesMap.Add(TEXT("BITMAP_32BPP_8888"), BITMAP_TYPE_32BPP_8888);
+	bmpTypesMap.Add(TEXT("BITMAP_1BPP_IDEAL"), BMP_TYPE_1BPP_IDEAL);
+	bmpTypesMap.Add(TEXT("BITMAP_1BPP_VERTICAL"), BMP_TYPE_1BPP_VERTICAL);
+	bmpTypesMap.Add(TEXT("BITMAP_8BPP_PALETTE"), BMP_TYPE_8BPP_PALETTE);
+	bmpTypesMap.Add(TEXT("BITMAP_16BPP_565"), BMP_TYPE_16BPP_565);
+	bmpTypesMap.Add(TEXT("BITMAP_18BPP_666"), BMP_TYPE_18BPP_666);
+	bmpTypesMap.Add(TEXT("BITMAP_24BPP_888"), BMP_TYPE_24BPP_888);
+	bmpTypesMap.Add(TEXT("BITMAP_32BPP_8888"), BMP_TYPE_32BPP_8888);
 }
 
 gfx_BitmapTypeEnum_t CLCDBitmapCreatorDlg::getBmpTypeFromProp(CString& prop)
 {
-	gfx_BitmapTypeEnum_t retVal = BITMAP_TYPE_1BPP_VERTICAL;
+	gfx_BitmapTypeEnum_t retVal = BMP_TYPE_1BPP_VERTICAL;
 	
 	int ret = bmpTypesMap.FindKey(prop);
 	
@@ -560,7 +523,7 @@ void CLCDBitmapCreatorDlg::InitBmpPropGrid(void)
 	pProp->AddOption(TEXT("BITMAP_32BPP_8888"));
 	pProp->SetValue(TEXT("BITMAP_1BPP_VERTICAL"));	//Default choice
 	pProp->AllowEdit();
-	props.setPropOutputType(BITMAP_TYPE_1BPP_VERTICAL);
+	props.setPropOutputType(BMP_TYPE_1BPP_VERTICAL);
 
 	pGroup2->SetData(OUTPUT_IMG_GROUP_PROP_ID);
 	pGroup2->AddSubItem(pProp);
@@ -737,7 +700,7 @@ afx_msg LRESULT CLCDBitmapCreatorDlg::OnAfxWmPropertyChanged(WPARAM wParam, LPAR
 	return 0;
 }
 
-bool CLCDBitmapCreatorDlg::WriteBitmapToCFile(CString& InputFilename, CString& OutputFilename, CString& ArrayName, gfx_Bitmap_t* pBitmap, bool bAddBitmapHeader, bool bConst, bool singleOutputFile)
+bool CLCDBitmapCreatorDlg::WriteBitmapToCFile(CString& InputFilename, CString& OutputFilename, CString& ArrayName, gfx_Bmp_t* pBitmap, bool bAddBitmapHeader, bool bConst, bool singleOutputFile)
 {
 	FILE* pFile;
 	errno_t ret;
@@ -769,9 +732,9 @@ bool CLCDBitmapCreatorDlg::WriteBitmapToCFile(CString& InputFilename, CString& O
 			fwprintf(pFile, TEXT("#include <types.h>\n"));
 		}
 		if (bConst)
-			fwprintf(pFile, TEXT("const gfx_Bitmap_t %s = {\n"), ArrayName.GetString());
+			fwprintf(pFile, TEXT("const gfx_Bmp_t %s = {\n"), ArrayName.GetString());
 		else
-			fwprintf(pFile, TEXT("gfx_Bitmap_t %s = {\n"), ArrayName.GetString());
+			fwprintf(pFile, TEXT("gfx_Bmp_t %s = {\n"), ArrayName.GetString());
 	}
 
 	fwprintf(pFile, TEXT("{\n"));
@@ -779,13 +742,13 @@ bool CLCDBitmapCreatorDlg::WriteBitmapToCFile(CString& InputFilename, CString& O
 
 	switch (pBitmap->uType)
 	{
-		case BITMAP_TYPE_1BPP_IDEAL:
-		case BITMAP_TYPE_1BPP_VERTICAL:
-		case BITMAP_TYPE_16BPP_565:
-		case BITMAP_TYPE_18BPP_666:
-		case BITMAP_TYPE_24BPP_888:
-		case BITMAP_TYPE_32BPP_8888:
-		case BITMAP_TYPE_8BPP_PALETTE:
+		case BMP_TYPE_1BPP_IDEAL:
+		case BMP_TYPE_1BPP_VERTICAL:
+		case BMP_TYPE_16BPP_565:
+		case BMP_TYPE_18BPP_666:
+		case BMP_TYPE_24BPP_888:
+		case BMP_TYPE_32BPP_8888:
+		case BMP_TYPE_8BPP_PALETTE:
 			iSize = 4 + gfx_format_GetDataSize(pBitmap->uType)(pBitmap->uWidth, pBitmap->uHeight);
 			break;
 		default:
@@ -796,7 +759,7 @@ bool CLCDBitmapCreatorDlg::WriteBitmapToCFile(CString& InputFilename, CString& O
 	if (bAddBitmapHeader)
 	{
 
-		fwprintf(pFile, TEXT("    // First 32-bits is meta-data packed logically as in gfx_Bitmap_t:\n"));
+		fwprintf(pFile, TEXT("    // First 32-bits is meta-data packed logically as in gfx_Bmp_t:\n"));
 		fwprintf(pFile, TEXT("    // type(8)width(12)height(12), reversed in memory due to endian-ness\n"));
 		fwprintf(pFile, TEXT("    %s,\n"), getBmpPropStrFromEnum((gfx_BitmapTypeEnum_t)((pBitmap->uType) & 0xff)).GetString());
 		fwprintf(pFile, TEXT("    %u, "), (pBitmap->uWidth) & 0xfff);
@@ -805,7 +768,7 @@ bool CLCDBitmapCreatorDlg::WriteBitmapToCFile(CString& InputFilename, CString& O
 
 	for (int i = 1; i < (iSize + 3) / 4; i++)
 	{
-		if (pBitmap->uType == BITMAP_TYPE_18BPP_666)
+		if (pBitmap->uType == BMP_TYPE_18BPP_666)
 		{
 			// Special case for 18bpp 666 format
 			// Right justify the 6 most significant bits per octet
@@ -831,7 +794,7 @@ bool CLCDBitmapCreatorDlg::WriteBitmapToCFile(CString& InputFilename, CString& O
 	return false;
 }
 
-bool CLCDBitmapCreatorDlg::LoadBitmapFromFile(CString& inputFile, gfx_BitmapTypeEnum_t eOutputBitmapType, gfx_Bitmap_t** pBitmap)
+bool CLCDBitmapCreatorDlg::LoadBitmapFromFile(CString& inputFile, gfx_BitmapTypeEnum_t eOutputBitmapType, gfx_Bmp_t** pBitmap)
 {
 	CImage image;
 
@@ -843,19 +806,19 @@ bool CLCDBitmapCreatorDlg::LoadBitmapFromFile(CString& inputFile, gfx_BitmapType
 	}
 	if(eOutputBitmapType == -1)
 	{
-		// Let's guess that it's BITMAP_TYPE_1BPP_VERTICAL always...
-		eOutputBitmapType = BITMAP_TYPE_1BPP_VERTICAL;
+		// Let's guess that it's BMP_TYPE_1BPP_VERTICAL always...
+		eOutputBitmapType = BMP_TYPE_1BPP_VERTICAL;
 	}
 
 	switch(eOutputBitmapType)
 	{
-		case BITMAP_TYPE_1BPP_IDEAL:
-		case BITMAP_TYPE_1BPP_VERTICAL:
-		case BITMAP_TYPE_16BPP_565:
-		case BITMAP_TYPE_18BPP_666:
-		case BITMAP_TYPE_24BPP_888:
-		case BITMAP_TYPE_32BPP_8888:
-		case BITMAP_TYPE_8BPP_PALETTE:
+		case BMP_TYPE_1BPP_IDEAL:
+		case BMP_TYPE_1BPP_VERTICAL:
+		case BMP_TYPE_16BPP_565:
+		case BMP_TYPE_18BPP_666:
+		case BMP_TYPE_24BPP_888:
+		case BMP_TYPE_32BPP_8888:
+		case BMP_TYPE_8BPP_PALETTE:
 			*pBitmap = gfx_bmp_CreateBitmap(eOutputBitmapType, image.GetWidth(), image.GetHeight());
 			break;
 		default:
@@ -875,7 +838,7 @@ bool CLCDBitmapCreatorDlg::LoadBitmapFromFile(CString& inputFile, gfx_BitmapType
 	{
 		for (int x = 0; x < image.GetWidth(); x++)
 		{
-			if ((eOutputBitmapType == BITMAP_TYPE_32BPP_8888) && (image.GetBPP() == 32)) {
+			if ((eOutputBitmapType == BMP_TYPE_32BPP_8888) && (image.GetBPP() == 32)) {
 				//get the address of the 32 bit pixel because we need to read it out.  GetPixel only return RGB data.
 				pcolor = (COLORREF*)image.GetPixelAddress(x, y);
 				color = RGBA((*pcolor & 0x00FF0000) >> 16, (*pcolor & 0x0000FF00) >> 8, (*pcolor & 0x000000FF), (*pcolor & 0xFF000000) >> 24);
@@ -931,21 +894,22 @@ bool CLCDBitmapCreatorDlg::LoadBitmapFromFile(CString& inputFile, gfx_BitmapType
 ///
 /// \sa AppendToLogAndScroll()
 //-----------------------------------------------------------------------------
-int CLCDBitmapCreatorDlg::AppendToLog(CString str, COLORREF color)
+int CLCDBitmapCreatorDlg::AppendToLog(CString str, COLORREF colorFG, COLORREF colorBG)
 {
 	int nOldLines = 0, nNewLines = 0, nScroll = 0;
 	long nInsertionPoint = 0;
-	CHARRANGE cr;
-	CHARFORMAT cf;
+	//CHARRANGE cr;
+	CHARFORMAT2 cf;
 
 	// Save number of lines before insertion of new text
 	nOldLines = m_ctrlLog.GetLineCount();
 
 	// Initialize character format structure
-	cf.cbSize = sizeof(CHARFORMAT);
+	cf.cbSize = sizeof(CHARFORMAT2);
 	cf.dwMask = CFM_COLOR;
 	cf.dwEffects = 0;	// To disable CFE_AUTOCOLOR
-	cf.crTextColor = color;
+	cf.crTextColor = colorFG;
+	cf.crBackColor = colorBG; //0xFF000000;
 
 	// Set insertion point to end of text
 	nInsertionPoint = m_ctrlLog.GetWindowTextLength();
@@ -975,7 +939,6 @@ int CLCDBitmapCreatorDlg::AppendToLog(CString str, COLORREF color)
 
 	return 0;
 }
-
 
 //-----------------------------------------------------------------------------
 //  AppendToLogAndScroll()
@@ -1033,7 +996,7 @@ int CLCDBitmapCreatorDlg::AppendToLog(CString str, COLORREF color)
 /// Please note that the code is written for maximum comprehension / good
 /// readability, not for code or execution efficiency.
 //-----------------------------------------------------------------------------
-int CLCDBitmapCreatorDlg::AppendToLogAndScroll(CString str, COLORREF color)
+int CLCDBitmapCreatorDlg::AppendToLogAndScroll(CString str, COLORREF colorFG, COLORREF colorBG)
 {
 	long nVisible = 0;
 	long nInsertionPoint = 0;
@@ -1044,8 +1007,8 @@ int CLCDBitmapCreatorDlg::AppendToLogAndScroll(CString str, COLORREF color)
 	cf.dwMask = CFM_COLOR;
 	cf.dwEffects = 0; // To disable CFE_AUTOCOLOR
 
-	cf.crTextColor = color;
-
+	cf.crTextColor = colorFG;
+	//cf.crBackColor = colorBG;
 	// Set insertion point to end of text
 	nInsertionPoint = m_ctrlLog.GetWindowTextLength();
 	m_ctrlLog.SetSel(nInsertionPoint, -1);
@@ -1053,7 +1016,7 @@ int CLCDBitmapCreatorDlg::AppendToLogAndScroll(CString str, COLORREF color)
 	// Set the character format
 	m_ctrlLog.SetSelectionCharFormat(cf);
 
-	// Replace selection. Because we have nothing
+	// Replace selection. Because we have nothing 
 	// selected, this will simply insert
 	// the string at the current caret position.
 	m_ctrlLog.ReplaceSel(str);
@@ -1120,6 +1083,5 @@ int CLCDBitmapCreatorDlg::GetNumVisibleLines(CRichEditCtrl* pCtrl)
 
 void CLCDBitmapCreatorDlg::OnBnClickedCancel()
 {
-	if (CanExit())
-		CDialogEx::OnCancel();
+	CDialog::OnCancel();
 }

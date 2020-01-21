@@ -19,7 +19,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_bitblit_8BPP_Palette_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect, gfx_Bitmap_t *pSrc, int SourceXoffset, int SourceYoffset){
+void gfx_bitblit_8BPP_Palette_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect, gfx_Bmp_t *pSrc, int SourceXoffset, int SourceYoffset){
     int x,y;
     unsigned char *pSourceOrigin;
     unsigned short *pDestOrigin;
@@ -57,8 +57,8 @@ void gfx_bitblit_8BPP_Palette_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_bitblit_8BPP_Palette(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect,
-                      gfx_Bitmap_t *pSrc, int SourceXoffset, int SourceYoffset)
+void gfx_bitblit_8BPP_Palette(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect,
+                      gfx_Bmp_t *pSrc, int SourceXoffset, int SourceYoffset)
 {
     int y;
     unsigned char *pSourceOrigin;
@@ -89,7 +89,7 @@ void gfx_bitblit_8BPP_Palette(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Re
 
 
 ////////////////////////////////////////////////////////////////////////////////
-//! \brief This is the optimized version of BITMAP_TYPE_8BPP_PALETTE to BITMAP_TYPE_8BPP_PALETTE stretchblt operation.
+//! \brief This is the optimized version of BMP_TYPE_8BPP_PALETTE to BMP_TYPE_8BPP_PALETTE stretchblt operation.
 //!
 //! This function copies a bitmap into a rectangle within another and scales the source image apprpriately.
 //!
@@ -104,8 +104,8 @@ void gfx_bitblit_8BPP_Palette(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Re
 //! \internal
 //!
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_stretchblit_8BPP_Palette_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect,
-                             gfx_Bitmap_t *pSrc, int SourceXoffset, int SourceYoffset, uint32_t scalingFactor)
+void gfx_stretchblit_8BPP_Palette_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect,
+                             gfx_Bmp_t *pSrc, int SourceXoffset, int SourceYoffset, uint32_t scalingFactor)
 {
     uint32_t i,j,k;
 	uint32_t	i32Result_R, i32Result_G, i32Result_B;
@@ -335,7 +335,7 @@ void gfx_stretchblit_8BPP_Palette_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_PutPixel_8BPP_Palette(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
+void gfx_PutPixel_8BPP_Palette(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap,
                        uint16_t u16x, uint16_t u16y, gfx_Color_t cRGB)
 {
     unsigned char *pData;
@@ -374,7 +374,7 @@ void gfx_PutPixel_8BPP_Palette(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_GetPixel_8BPP_Palette(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
+void gfx_GetPixel_8BPP_Palette(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap,
                        uint16_t x, uint16_t y, gfx_Color_t *pRGB)
 {
     unsigned char *pData;

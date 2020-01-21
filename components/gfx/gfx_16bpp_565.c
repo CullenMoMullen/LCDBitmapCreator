@@ -19,8 +19,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_bitblit_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect,
-                           gfx_Bitmap_t *pSrc, int SourceXoffset, int SourceYoffset)
+void gfx_bitblit_16BPP_565(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect,
+                           gfx_Bmp_t *pSrc, int SourceXoffset, int SourceYoffset)
 {
     int y;
     unsigned short *pSourceOrigin;
@@ -75,7 +75,7 @@ void gfx_bitblit_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_PutPixel_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
+void gfx_PutPixel_16BPP_565(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap,
                             uint16_t u16x, uint16_t u16y, gfx_Color_t cRGB)
 {
     unsigned short *pData;
@@ -112,7 +112,7 @@ void gfx_PutPixel_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_GetPixel_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
+void gfx_GetPixel_16BPP_565(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap,
                             uint16_t x, uint16_t y, gfx_Color_t *pRGB)
 {
     unsigned short *pData;
@@ -136,7 +136,7 @@ uint32_t gfx_GetDataSize_16BPP_565(uint16_t u16Width, uint16_t u16Height)
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_DrawClippedLine_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, int x0, int y0, int x1, int y1, gfx_Color_t color)
+void gfx_DrawClippedLine_16BPP_565(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, int x0, int y0, int x1, int y1, gfx_Color_t color)
 {
     uint16_t u16Color =     ((color & 0x00F80000) >>19) |
                             ((color & 0x0000FC00) >> 5) |
@@ -181,8 +181,8 @@ void gfx_DrawClippedLine_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, i
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_alphablend_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect,
-                              gfx_Bitmap_t *pSrc, int SourceXoffset, int SourceYoffset, uint8_t alphaValue)
+void gfx_alphablend_16BPP_565(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect,
+                              gfx_Bmp_t *pSrc, int SourceXoffset, int SourceYoffset, uint8_t alphaValue)
 {
 #ifdef _WIN32
     int x;

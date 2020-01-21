@@ -4,7 +4,26 @@
 #define VC_EXTRALEAN            // Exclude rarely-used stuff from Windows headers
 #endif
 
-#include "targetver.h"
+//#include "targetver.h"
+
+
+///////////////////////////////
+#ifndef WINVER				// Lassen Sie die Verwendung von Features spezifisch für Windows 95 und Windows NT 4 oder später zu.
+#define WINVER 0x0501		// Ändern Sie den entsprechenden Wert, um auf Windows 98 und mindestens Windows 2000 abzuzielen.
+#endif
+
+#ifndef _WIN32_WINNT		// Lassen Sie die Verwendung von Features spezifisch für Windows NT 4 oder später zu.
+#define _WIN32_WINNT _WIN32_WINNT_WINXP		// Ändern Sie den entsprechenden Wert, um auf Windows 98 und mindestens Windows 2000 abzuzielen.
+#endif						
+
+#ifndef _WIN32_WINDOWS		// Lassen Sie die Verwendung von Features spezifisch für Windows 98 oder später zu.
+#define _WIN32_WINDOWS 0x0410 // Ändern Sie den entsprechenden Wert, um auf mindestens Windows Me abzuzielen.
+#endif
+
+#ifndef _WIN32_IE			// Lassen Sie die Verwendung von Features spezifisch für IE 4.0 oder später zu.
+#define _WIN32_IE 0x0400	// Ändern Sie den entsprechenden Wert, um auf mindestens IE 5.0 abzuzielen.
+#endif
+////////////////////////////
 
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS      // some CString constructors will be explicit
 
@@ -16,34 +35,17 @@
 #include <afxdisp.h>        // MFC Automation classes
 
 
-//#include <afxdtctl.h>           // MFC support for Internet Explorer 4 Common Controls
-#ifndef _AFX_NO_OLE_SUPPORT
+
+//#ifndef _AFX_NO_OLE_SUPPORT
 #include <afxdtctl.h>           // MFC support for Internet Explorer 4 Common Controls
-#endif
-#ifndef _AFX_NO_AFXCMN_SUPPORT
+//#endif
+//#ifndef _AFX_NO_AFXCMN_SUPPORT
 #include <afxcmn.h>             // MFC support for Windows Common Controls
-#endif // _AFX_NO_AFXCMN_SUPPORT
+//#endif // _AFX_NO_AFXCMN_SUPPORT
 
 #include <afxcontrolbars.h>     // MFC support for ribbons and control bars
 
 
-
-
-
-
-
-
-// This macro is the same as IMPLEMENT_OLECREATE, except it passes TRUE
-// for the bMultiInstance parameter to the COleObjectFactory constructor.
-// We want a separate instance of this application to be launched for
-// each automation proxy object requested by automation controllers.
-#ifndef IMPLEMENT_OLECREATE2
-#define IMPLEMENT_OLECREATE2(class_name, external_name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
-        AFX_DATADEF COleObjectFactory class_name::factory(class_name::guid, \
-                RUNTIME_CLASS(class_name), TRUE, _T(external_name)); \
-        const AFX_DATADEF GUID class_name::guid = \
-                { l, w1, w2, { b1, b2, b3, b4, b5, b6, b7, b8 } };
-#endif // IMPLEMENT_OLECREATE2
 
 #ifdef _UNICODE
 #if defined _M_IX86

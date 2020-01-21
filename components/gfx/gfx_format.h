@@ -25,8 +25,8 @@ extern "C" {
 //! so that the appropriate bitblt function is called for the specfifc source/destination
 //! format pair.
 ////////////////////////////////////////////////////////////////////////////////
-typedef void(gfx_format_GetBitBlt_t)(gfx_Color_t *pPalette, gfx_Bitmap_t*,gfx_Rect_t,
-                                        gfx_Bitmap_t*,int,int);
+typedef void(gfx_format_GetBitBlt_t)(gfx_Color_t *pPalette, gfx_Bmp_t*,gfx_Rect_t,
+                                        gfx_Bmp_t*,int,int);
 
 ////////////////////////////////////////////////////////////////////////////////
 //! \brief Typedef for AlphaBlend function pointer
@@ -36,8 +36,8 @@ typedef void(gfx_format_GetBitBlt_t)(gfx_Color_t *pPalette, gfx_Bitmap_t*,gfx_Re
 //! so that the appropriate AlphaBlend function is called for the specfifc source/destination
 //! format pair.
 ////////////////////////////////////////////////////////////////////////////////
-typedef void(gfx_format_GetAlphaBlend_t)(gfx_Color_t *pPalette, gfx_Bitmap_t*,gfx_Rect_t,
-                                        gfx_Bitmap_t*,int,int,uint8_t);
+typedef void(gfx_format_GetAlphaBlend_t)(gfx_Color_t *pPalette, gfx_Bmp_t*,gfx_Rect_t,
+                                        gfx_Bmp_t*,int,int,uint8_t);
 
 ////////////////////////////////////////////////////////////////////////////////
 //! \brief Typedef for StretchBlt function pointer
@@ -47,9 +47,9 @@ typedef void(gfx_format_GetAlphaBlend_t)(gfx_Color_t *pPalette, gfx_Bitmap_t*,gf
 //! so that the appropriate StretchBlt function is called for the specfifc source/destination
 //! format pair.
 ////////////////////////////////////////////////////////////////////////////////
-typedef void (gfx_format_GetStretchBlt_t)(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, 
+typedef void (gfx_format_GetStretchBlt_t)(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, 
                                           gfx_Rect_t ClipRect, gfx_Rect_t *dstRect, 
-                                          gfx_Bitmap_t *pSrc, gfx_Rect_t *srcRect, gfx_StretchFilter_t filterType);
+                                          gfx_Bmp_t *pSrc, gfx_Rect_t *srcRect, gfx_StretchFilter_t filterType);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ typedef void (gfx_format_GetStretchBlt_t)(gfx_Color_t *pPalette, gfx_Bitmap_t *p
 //! pointer to a function of this type is returned from a lookup table during a PutPixel
 //! so that the appropriate PutPixel function is called for the specfifc color format
 ////////////////////////////////////////////////////////////////////////////////
-typedef void(gfx_format_PutPixel_t)(gfx_Color_t *pPalette, gfx_Bitmap_t *, uint16_t,
+typedef void(gfx_format_PutPixel_t)(gfx_Color_t *pPalette, gfx_Bmp_t *, uint16_t,
                                     uint16_t, gfx_Color_t );
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ typedef void(gfx_format_PutPixel_t)(gfx_Color_t *pPalette, gfx_Bitmap_t *, uint1
 //! pointer to a function of this type is returned from a lookup table during a GetPixel
 //! so that the appropriate GetPixel function is called for the specfifc color format
 ////////////////////////////////////////////////////////////////////////////////
-typedef void(gfx_format_GetPixel_t)(gfx_Color_t *pPalette, gfx_Bitmap_t *, uint16_t,
+typedef void(gfx_format_GetPixel_t)(gfx_Color_t *pPalette, gfx_Bmp_t *, uint16_t,
                                     uint16_t, gfx_Color_t *);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -90,7 +90,7 @@ typedef uint32_t(gfx_format_GetDataSize_t)(uint16_t,uint16_t);
 //! optimized version of DrawLine is available for the color format then the graphics library
 //! will use PutPixel to accomplish the drawing of a line.
 ////////////////////////////////////////////////////////////////////////////////
-typedef void(gfx_format_DrawLine_t)(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest,
+typedef void(gfx_format_DrawLine_t)(gfx_Color_t *pPalette, gfx_Bmp_t *pDest,
                       int x0, int y0, int x1, int y1, gfx_Color_t color);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -101,8 +101,8 @@ typedef void(gfx_format_DrawLine_t)(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest,
 //! so that the appropriate bitblt function is called for the specfifc source/destination
 //! format pair.
 ////////////////////////////////////////////////////////////////////////////////
-typedef void (gfx_format_Bitblt_t)(gfx_Color_t *pPalette, gfx_Bitmap_t*,gfx_Rect_t,
-                                        gfx_Bitmap_t*,int,int);
+typedef void (gfx_format_Bitblt_t)(gfx_Color_t *pPalette, gfx_Bmp_t*,gfx_Rect_t,
+                                        gfx_Bmp_t*,int,int);
 
 ////////////////////////////////////////////////////////////////////////////////
 //! \brief Typedef for AlphaBlend function pointer
@@ -112,8 +112,8 @@ typedef void (gfx_format_Bitblt_t)(gfx_Color_t *pPalette, gfx_Bitmap_t*,gfx_Rect
 //! so that the appropriate AlphaBlend function is called for the specfifc source/destination
 //! format pair.
 ////////////////////////////////////////////////////////////////////////////////
-typedef void (gfx_format_AlphaBlend_t)(gfx_Color_t *pPalette, gfx_Bitmap_t*,gfx_Rect_t,
-                                        gfx_Bitmap_t*,int,int,uint8_t);
+typedef void (gfx_format_AlphaBlend_t)(gfx_Color_t *pPalette, gfx_Bmp_t*,gfx_Rect_t,
+                                        gfx_Bmp_t*,int,int,uint8_t);
 
 ////////////////////////////////////////////////////////////////////////////////
 //! \brief Typedef for DrawLine function pointer
@@ -124,7 +124,7 @@ typedef void (gfx_format_AlphaBlend_t)(gfx_Color_t *pPalette, gfx_Bitmap_t*,gfx_
 //! optimized version of DrawLine is available for the color format then the graphics library
 //! will use PutPixel to accomplish the drawing of a line.
 ////////////////////////////////////////////////////////////////////////////////
-typedef void (gfx_format_LineDraw_t)(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest,
+typedef void (gfx_format_LineDraw_t)(gfx_Color_t *pPalette, gfx_Bmp_t *pDest,
                                      int x0, int y0, int x1, int y1, gfx_Color_t color);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -136,8 +136,8 @@ typedef void (gfx_format_LineDraw_t)(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest,
 //! optimized version of stretch blit is available for the color format then the graphics library
 //! will use GetPixel/PutPixel to accomplish the stretching of a bitmap.
 ////////////////////////////////////////////////////////////////////////////////
-typedef void (gfx_format_StretchBlt_t)(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, 
-                                       gfx_Rect_t clipRect, gfx_Rect_t *dstRect, gfx_Bitmap_t *pSrc, 
+typedef void (gfx_format_StretchBlt_t)(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, 
+                                       gfx_Rect_t clipRect, gfx_Rect_t *dstRect, gfx_Bmp_t *pSrc, 
                                        gfx_Rect_t *srcRect, gfx_StretchFilter_t filterType);
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -151,7 +151,7 @@ typedef void (gfx_format_StretchBlt_t)(gfx_Color_t *pPalette, gfx_Bitmap_t *pDes
 //!       it is exposed in case the customer would like to get the pointer to
 //!       the GetPixel function for a particular bitmap type.
 ///////////////////////////////////////////////////////////////////////////////
-gfx_format_GetPixel_t    *gfx_format_GetPixel(gfx_Bitmap_t*);
+gfx_format_GetPixel_t    *gfx_format_GetPixel(gfx_Bmp_t*);
 
 ///////////////////////////////////////////////////////////////////////////////
 //! \brief Function to obtain the 'PutPixel' function of a bitmap type.
@@ -165,7 +165,7 @@ gfx_format_GetPixel_t    *gfx_format_GetPixel(gfx_Bitmap_t*);
 //!       it is exposed in case the customer would like to get the pointer to
 //!       the PutPixel function for a particular bitmap type.
 ///////////////////////////////////////////////////////////////////////////////
-gfx_format_PutPixel_t    *gfx_format_PutPixel(gfx_Bitmap_t*);
+gfx_format_PutPixel_t    *gfx_format_PutPixel(gfx_Bmp_t*);
 
 ///////////////////////////////////////////////////////////////////////////////
 //! \brief Function to obtain the 'BitBlt' function between two bitmaps. 
@@ -179,7 +179,7 @@ gfx_format_PutPixel_t    *gfx_format_PutPixel(gfx_Bitmap_t*);
 //!       it is exposed in case the customer would like to get the pointer to
 //!       the BitBlt function for a particular bitmap pair.
 ///////////////////////////////////////////////////////////////////////////////
-gfx_format_GetBitBlt_t   *gfx_format_BitBlt(gfx_Bitmap_t*, gfx_Bitmap_t*);
+gfx_format_GetBitBlt_t   *gfx_format_BitBlt(gfx_Bmp_t*, gfx_Bmp_t*);
 
 ///////////////////////////////////////////////////////////////////////////////
 //! \brief Function to obtain the 'Alphablend' function between two bitmaps.
@@ -193,7 +193,7 @@ gfx_format_GetBitBlt_t   *gfx_format_BitBlt(gfx_Bitmap_t*, gfx_Bitmap_t*);
 //!       it is exposed in case the customer would like to get the pointer to
 //!       the AlphaBlend function for a particular bitmap pair.
 ///////////////////////////////////////////////////////////////////////////////
-gfx_format_GetAlphaBlend_t *gfx_format_AlphaBlend(gfx_Bitmap_t*, gfx_Bitmap_t*);
+gfx_format_GetAlphaBlend_t *gfx_format_AlphaBlend(gfx_Bmp_t*, gfx_Bmp_t*);
 
 ///////////////////////////////////////////////////////////////////////////////
 //! \brief Function to obtain the 'StretchBlt' function between two bitmaps. 
@@ -207,7 +207,7 @@ gfx_format_GetAlphaBlend_t *gfx_format_AlphaBlend(gfx_Bitmap_t*, gfx_Bitmap_t*);
 //!       it is exposed in case the customer would like to get the pointer to
 //!       the StretchBlt function for a particular bitmap pair.
 ///////////////////////////////////////////////////////////////////////////////
-gfx_format_GetStretchBlt_t *gfx_format_StretchBlt(gfx_Bitmap_t*, gfx_Bitmap_t*);
+gfx_format_GetStretchBlt_t *gfx_format_StretchBlt(gfx_Bmp_t*, gfx_Bmp_t*);
 
 ///////////////////////////////////////////////////////////////////////////////
 //! \brief Function to obtain the 'Get Data Size' function of a bitmap type.
@@ -231,7 +231,7 @@ gfx_format_GetDataSize_t *gfx_format_GetDataSize(uint8_t);
 //!       it is exposed in case the customer would like to get the pointer to
 //!       the GetLineDraw function for a particular bitmap type.
 ///////////////////////////////////////////////////////////////////////////////
-gfx_format_LineDraw_t    *gfx_format_GetLineDraw(gfx_Bitmap_t*);
+gfx_format_LineDraw_t    *gfx_format_GetLineDraw(gfx_Bmp_t*);
 
 //! \brief Structure for encapsulating all the function handlers for a particular bitmap format.
 typedef struct _gfx_BitmapFormat
@@ -306,7 +306,7 @@ extern const gfx_format_StretchBltEntry_t   g_gfx_StretchBltFunctions[];
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_GetPixel_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
+void gfx_GetPixel_16BPP_565(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap,
                             uint16_t x, uint16_t y, gfx_Color_t *pPixel);
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -327,7 +327,7 @@ void gfx_GetPixel_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_PutPixel_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
+void gfx_PutPixel_16BPP_565(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap,
                             uint16_t x, uint16_t y, gfx_Color_t uRGB);
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -363,8 +363,8 @@ uint32_t gfx_GetDataSize_16BPP_565(uint16_t u16x, uint16_t u16y);
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_bitblit_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect,
-                           gfx_Bitmap_t *pSrc, int SourceXoffset, int SourceYoffset);
+void gfx_bitblit_16BPP_565(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect,
+                           gfx_Bmp_t *pSrc, int SourceXoffset, int SourceYoffset);
 
 ///////////////////////////////////////////////////////////////////////////////
 //! \brief Draws a line, pre-clipped, in a given color to a given bitmap
@@ -373,7 +373,7 @@ void gfx_bitblit_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_
 //! \todo introduce an assembly version of the horizontal line draw.
 //! 
 //! \param[in] pPalette     Not used by this function
-//! \param[in] pDest        The gfx_Bitmap_t to draw onto
+//! \param[in] pDest        The gfx_Bmp_t to draw onto
 //! \param[in] x0           x of point 0
 //! \param[in] y0           y of point 0
 //! \param[in] x1           x of point 1
@@ -386,7 +386,7 @@ void gfx_bitblit_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_
 //!       context.  The caller should check all bounds to make sure the line
 //!       will fit within the bitmap being drawn to.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_DrawClippedLine_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, 
+void gfx_DrawClippedLine_16BPP_565(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, 
                                    int x0, int y0, int x1, int y1, gfx_Color_t color);
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -412,8 +412,8 @@ void gfx_DrawClippedLine_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest,
 //!       context.  The caller should check all bounds to make sure the source bitmap
 //!       will fit within the bitmap being blended onto.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_alphablend_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect,
-                              gfx_Bitmap_t *pSrc, int SourceXoffset, int SourceYoffset, 
+void gfx_alphablend_16BPP_565(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect,
+                              gfx_Bmp_t *pSrc, int SourceXoffset, int SourceYoffset, 
                               uint8_t alphaValue);
 
 //function prototypes for BITMAP_TYPE_16BPP_565_DD
@@ -435,7 +435,7 @@ void gfx_alphablend_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Re
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_GetPixel_16BPP_565_dd(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
+void gfx_GetPixel_16BPP_565_dd(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap,
                    uint16_t x, uint16_t y, gfx_Color_t *pPixel);
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -456,7 +456,7 @@ void gfx_GetPixel_16BPP_565_dd(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_PutPixel_16BPP_565_dd(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
+void gfx_PutPixel_16BPP_565_dd(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap,
                    uint16_t x, uint16_t y, gfx_Color_t uRGB);
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -493,16 +493,16 @@ uint32_t gfx_GetDataSize_16BPP_565_dd(uint16_t u16x, uint16_t u16y);
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
 void gfx_bitblit_16BPP_565_dd(gfx_Color_t *pPalette,
-                  gfx_Bitmap_t *pDest,
+                  gfx_Bmp_t *pDest,
                   gfx_Rect_t Rect,
-                  gfx_Bitmap_t *pSrc,
+                  gfx_Bmp_t *pSrc,
                   int SourceXoffset,
                   int SourceYoffset);
 
 void gfx_bitblit_1BPP_Ideal_To_16BPP_565_dd(gfx_Color_t *pPalette,
-                        gfx_Bitmap_t *pDest,
+                        gfx_Bmp_t *pDest,
                         gfx_Rect_t Rect,
-                        gfx_Bitmap_t *pSrc,
+                        gfx_Bmp_t *pSrc,
                         int SourceXoffset,
                         int SourceYoffset);
 
@@ -513,7 +513,7 @@ void gfx_bitblit_1BPP_Ideal_To_16BPP_565_dd(gfx_Color_t *pPalette,
 //! \todo introduce an assembly version of the horizontal line draw.
 //! 
 //! \param[in] pPalette     Not used by this function
-//! \param[in] pDest        The gfx_Bitmap_t to draw onto
+//! \param[in] pDest        The gfx_Bmp_t to draw onto
 //! \param[in] x0           x of point 0
 //! \param[in] y0           y of point 0
 //! \param[in] x1           x of point 1
@@ -527,15 +527,15 @@ void gfx_bitblit_1BPP_Ideal_To_16BPP_565_dd(gfx_Color_t *pPalette,
 //!       will fit within the bitmap being drawn to.
 ///////////////////////////////////////////////////////////////////////////////
 void gfx_DrawClippedLine_16BPP_565_dd(gfx_Color_t *pPalette,
-                      gfx_Bitmap_t *pDest,
+                      gfx_Bmp_t *pDest,
                       int x0, int y0,
                       int x1, int y1,
                       gfx_Color_t color);
 
 void gfx_alphablend_16BPP_565_dd(gfx_Color_t *pPalette,
-                 gfx_Bitmap_t *pDest,
+                 gfx_Bmp_t *pDest,
                  gfx_Rect_t Rect,
-                 gfx_Bitmap_t *pSrc,
+                 gfx_Bmp_t *pSrc,
                  int SourceXoffset,
                  int SourceYoffset,
                  uint8_t alphaValue);
@@ -559,7 +559,7 @@ void gfx_alphablend_16BPP_565_dd(gfx_Color_t *pPalette,
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_GetPixel_1BPP_Ideal(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
+void gfx_GetPixel_1BPP_Ideal(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap,
                              uint16_t x, uint16_t y, gfx_Color_t *pPixel);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -580,7 +580,7 @@ void gfx_GetPixel_1BPP_Ideal(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_PutPixel_1BPP_Ideal(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
+void gfx_PutPixel_1BPP_Ideal(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap,
                              uint16_t x, uint16_t y, gfx_Color_t uRGB);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -613,7 +613,7 @@ uint32_t gfx_GetDataSize_1BPP_Ideal(uint16_t u16x, uint16_t u16y);
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_GetPixel_1BPP_Vertical(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap, 
+void gfx_GetPixel_1BPP_Vertical(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap, 
                                 uint16_t x, uint16_t y, gfx_Color_t *pRGB);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -634,7 +634,7 @@ void gfx_GetPixel_1BPP_Vertical(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_PutPixel_1BPP_Vertical(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap, 
+void gfx_PutPixel_1BPP_Vertical(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap, 
                                 uint16_t x, uint16_t y, gfx_Color_t cRGB);
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -667,7 +667,7 @@ uint32_t gfx_GetDataSize_1BPP_Vertical(uint16_t u16x, uint16_t u16y);
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_GetPixel_18BPP_666(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
+void gfx_GetPixel_18BPP_666(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap,
                             uint16_t x, uint16_t y, gfx_Color_t *pRGB);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -688,7 +688,7 @@ void gfx_GetPixel_18BPP_666(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_PutPixel_18BPP_666(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
+void gfx_PutPixel_18BPP_666(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap,
                             uint16_t u16x, uint16_t u16y, gfx_Color_t cRGB);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -723,8 +723,8 @@ uint32_t gfx_GetDataSize_18BPP_666(uint16_t u16x, uint16_t u16y);
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_bitblit_18BPP_666(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect,
-                           gfx_Bitmap_t *pSrc, int SourceXoffset, int SourceYoffset);
+void gfx_bitblit_18BPP_666(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect,
+                           gfx_Bmp_t *pSrc, int SourceXoffset, int SourceYoffset);
 
 ////////////////////////////////////////////////////////////////////////////////
 //! \brief Draws a line, pre-clipped, in a given color to a given bitmap
@@ -732,7 +732,7 @@ void gfx_bitblit_18BPP_666(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_
 //! This function draws a line, pre-clipped, onto a 16bpp 565 bitmap
 //!
 //! \param[in] pPalette     Not used by this function
-//! \param[in] pDest        The gfx_Bitmap_t to draw onto
+//! \param[in] pDest        The gfx_Bmp_t to draw onto
 //! \param[in] x0           x of point 0
 //! \param[in] y0           y of point 0
 //! \param[in] x1           x of point 1
@@ -745,7 +745,7 @@ void gfx_bitblit_18BPP_666(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_
 //!       context.  The caller should check all bounds to make sure the line
 //!       will fit within the bitmap being drawn to.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_DrawClippedLine_18BPP_666(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, 
+void gfx_DrawClippedLine_18BPP_666(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, 
                                    int x0, int y0, int x1, int y1, gfx_Color_t color);
 
 
@@ -768,7 +768,7 @@ void gfx_DrawClippedLine_18BPP_666(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest,
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_GetPixel_24BPP_888(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
+void gfx_GetPixel_24BPP_888(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap,
                             uint16_t x, uint16_t y, gfx_Color_t *pRGB);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -789,7 +789,7 @@ void gfx_GetPixel_24BPP_888(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_PutPixel_24BPP_888(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
+void gfx_PutPixel_24BPP_888(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap,
                             uint16_t u16x, uint16_t u16y, gfx_Color_t cRGB);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -824,8 +824,8 @@ uint32_t gfx_GetDataSize_24BPP_888(uint16_t u16x, uint16_t u16y);
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_bitblit_24BPP_888(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect,
-                           gfx_Bitmap_t *pSrc, int SourceXoffset, int SourceYoffset);
+void gfx_bitblit_24BPP_888(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect,
+                           gfx_Bmp_t *pSrc, int SourceXoffset, int SourceYoffset);
 
 //function prototypes for BITMAP_TYPE_32BPP_8888
 ////////////////////////////////////////////////////////////////////////////////
@@ -846,7 +846,7 @@ void gfx_bitblit_24BPP_888(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_GetPixel_32BPP_8888(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
+void gfx_GetPixel_32BPP_8888(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap,
                  uint16_t x, uint16_t y, gfx_Color_t *pRGB);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -867,7 +867,7 @@ void gfx_GetPixel_32BPP_8888(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_PutPixel_32BPP_8888(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
+void gfx_PutPixel_32BPP_8888(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap,
                  uint16_t u16x, uint16_t u16y, gfx_Color_t cRGB);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -903,9 +903,9 @@ uint32_t gfx_GetDataSize_32BPP_8888(uint16_t u16x, uint16_t u16y);
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
 void gfx_bitblit_32BPP_8888(gfx_Color_t *pPalette,
-                gfx_Bitmap_t *pDest,
+                gfx_Bmp_t *pDest,
                 gfx_Rect_t Rect,
-                gfx_Bitmap_t *pSrc,
+                gfx_Bmp_t *pSrc,
                 int SourceXoffset,
                 int SourceYoffset);
 
@@ -941,8 +941,8 @@ void gfx_bitblit_32BPP_8888(gfx_Color_t *pPalette,
 //!       context.  The caller should check all bounds to make sure the source bitmap
 //!       will fit within the bitmap being blended onto.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_alphablend_32BPP_888_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect,
-                              gfx_Bitmap_t *pSrc, int SourceXoffset, int SourceYoffset, 
+void gfx_alphablend_32BPP_888_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect,
+                              gfx_Bmp_t *pSrc, int SourceXoffset, int SourceYoffset, 
                               uint8_t alphaValue);
 
 //function prototypes for BITMAP_TYPE_8BPP_PALETTE
@@ -965,7 +965,7 @@ void gfx_alphablend_32BPP_888_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_GetPixel_8BPP_Palette(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
+void gfx_GetPixel_8BPP_Palette(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap,
                              uint16_t x, uint16_t y, gfx_Color_t *pPixel);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -997,7 +997,7 @@ void gfx_GetPixel_8BPP_Palette(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_PutPixel_8BPP_Palette(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap,
+void gfx_PutPixel_8BPP_Palette(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap,
                              uint16_t x, uint16_t y, gfx_Color_t uRGB);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1031,8 +1031,8 @@ uint32_t gfx_GetDataSize_8BPP_Palette(uint16_t u16x, uint16_t u16y);
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_bitblit_8BPP_Palette(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect,
-                      gfx_Bitmap_t *pSrc, int SourceXoffset, int SourceYoffset);
+void gfx_bitblit_8BPP_Palette(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect,
+                      gfx_Bmp_t *pSrc, int SourceXoffset, int SourceYoffset);
 
 //Generic Graphics Functions
 ////////////////////////////////////////////////////////////////////////////////
@@ -1053,8 +1053,8 @@ void gfx_bitblit_8BPP_Palette(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Re
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_bitblt_Generic(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect,
-                        gfx_Bitmap_t *pSrc, int SourceXoffset, int SourceYoffset);
+void gfx_bitblt_Generic(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect,
+                        gfx_Bmp_t *pSrc, int SourceXoffset, int SourceYoffset);
 
 ////////////////////////////////////////////////////////////////////////////////
 //! \brief Draws a line, pre-clipped, in a given color to a given bitmap.
@@ -1080,7 +1080,7 @@ void gfx_bitblt_Generic(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t R
 //!       context.  The caller should check all bounds to make sure the line
 //!       will fit within the bitmap being drawn to.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_2d_DrawClippedLineGeneric(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, int x0,
+void gfx_2d_DrawClippedLineGeneric(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, int x0,
                                    int y0, int x1, int y1, gfx_Color_t color);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1103,8 +1103,8 @@ void gfx_2d_DrawClippedLineGeneric(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, i
 //!       context.  The caller should check all bounds to make sure the source bitmap
 //!       will fit within the bitmap being blended onto.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_alphablend_Generic(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect,
-                        gfx_Bitmap_t *pSrc, int SourceXoffset, int SourceYoffset, uint8_t alphaValue);
+void gfx_alphablend_Generic(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect,
+                        gfx_Bmp_t *pSrc, int SourceXoffset, int SourceYoffset, uint8_t alphaValue);
 
 ////////////////////////////////////////////////////////////////////////////////
 //! \brief This function is the generic StretchBlt operation.
@@ -1130,8 +1130,8 @@ void gfx_alphablend_Generic(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect
 //!       context.  The caller should check all bounds to make sure the source bitmap
 //!       will fit within the bitmap being stretched into.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_stretchblt_Generic(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect, 
-                            gfx_Rect_t *dstRect, gfx_Bitmap_t *pSrc, gfx_Rect_t *srcRect, gfx_StretchFilter_t filterType);
+void gfx_stretchblt_Generic(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect, 
+                            gfx_Rect_t *dstRect, gfx_Bmp_t *pSrc, gfx_Rect_t *srcRect, gfx_StretchFilter_t filterType);
 
 
 //Optimized Source-Destination Pair BitBlt Functions
@@ -1153,8 +1153,8 @@ void gfx_stretchblt_Generic(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_bitblit_1BPP_Ideal_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest,
-                        gfx_Rect_t Rect, gfx_Bitmap_t *pSrc,
+void gfx_bitblit_1BPP_Ideal_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bmp_t *pDest,
+                        gfx_Rect_t Rect, gfx_Bmp_t *pSrc,
                         int SourceXoffset, int SourceYoffset);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1175,8 +1175,8 @@ void gfx_bitblit_1BPP_Ideal_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pD
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_bitblit_8BPP_Palette_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, 
-                                           gfx_Rect_t Rect, gfx_Bitmap_t *pSrc, 
+void gfx_bitblit_8BPP_Palette_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, 
+                                           gfx_Rect_t Rect, gfx_Bmp_t *pSrc, 
                                            int SourceXoffset, int SourceYoffset);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1197,8 +1197,8 @@ void gfx_bitblit_8BPP_Palette_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *
 //!       and will call this function automatically, however this function is
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
-void gfx_bitblit_24BPP_888_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect,
-                           gfx_Bitmap_t *pSrc, int SourceXoffset, int SourceYoffset);
+void gfx_bitblit_24BPP_888_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect,
+                           gfx_Bmp_t *pSrc, int SourceXoffset, int SourceYoffset);
 
 ////////////////////////////////////////////////////////////////////////////////
 //! \brief Performs an optimized bitblt from a BITMAP_TYPE_32BPP_8888 source to a BITMAP_TYPE_16BPP_565 destination
@@ -1219,9 +1219,9 @@ void gfx_bitblit_24BPP_888_To_16BPP_565(gfx_Color_t *pPalette, gfx_Bitmap_t *pDe
 //!       exposed so the customer may call it directly if desired.
 ///////////////////////////////////////////////////////////////////////////////
 void gfx_bitblit_32BPP_8888_To_16BPP_565(gfx_Color_t *pPalette,
-                     gfx_Bitmap_t *pDest,
+                     gfx_Bmp_t *pDest,
                      gfx_Rect_t Rect,
-                     gfx_Bitmap_t *pSrc,
+                     gfx_Bmp_t *pSrc,
                      int SourceXoffset,
                      int SourceYoffset);
 

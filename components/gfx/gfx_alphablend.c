@@ -26,7 +26,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_alphablend_Generic(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect, gfx_Bitmap_t *pSrc, int SourceXoffset, int SourceYoffset, uint8_t alphaValue)
+void gfx_alphablend_Generic(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect, gfx_Bmp_t *pSrc, int SourceXoffset, int SourceYoffset, uint8_t alphaValue)
 {
     gfx_Color_t cRGB;
     int x, y;
@@ -72,10 +72,10 @@ void gfx_alphablend_Generic(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect
 //! \param[in] alphaValue           Opacity value for the source bitmap
 //! \note This function is an internal function and (probably) should not be called from the outside.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_alphablend_Simple(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t ClipRect, int x, int y, gfx_Bitmap_t *pSrc, uint8_t alphaValue)
+void gfx_alphablend_Simple(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t ClipRect, int x, int y, gfx_Bmp_t *pSrc, uint8_t alphaValue)
 {
-    void (*pAlphaBlend)(gfx_Color_t *pPalette, gfx_Bitmap_t*,gfx_Rect_t,
-                                        gfx_Bitmap_t*,int,int, uint8_t);
+    void (*pAlphaBlend)(gfx_Color_t *pPalette, gfx_Bmp_t*,gfx_Rect_t,
+                                        gfx_Bmp_t*,int,int, uint8_t);
     int SourceXOffset=0,SourceYOffset=0;
     //four easy early escapes because destination coordinates are
     //entirely outside of the destination rect
@@ -163,7 +163,7 @@ void gfx_alphablend_Simple(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_bmp_AlphaBlendBitmapByAddr(gfx_DeviceContext_t *pDC, gfx_Bitmap_t *pSrc, int x, int y, uint8_t alphaValue)
+void gfx_bmp_AlphaBlendBitmapByAddr(gfx_DeviceContext_t *pDC, gfx_Bmp_t *pSrc, int x, int y, uint8_t alphaValue)
 {
     assert(pDC);
     assert(pSrc);
@@ -185,14 +185,14 @@ void gfx_bmp_AlphaBlendBitmapByAddr(gfx_DeviceContext_t *pDC, gfx_Bitmap_t *pSrc
 void gfx_bmp_AlphaBlendBitmap(gfx_DeviceContext_t *pDC, uint32_t uResourceID, int x0, int y0, uint8_t alphaValue)
 {
     util_Handle_t hndl;
-    gfx_Bitmap_t *pBitmap = NULL;
+    gfx_Bmp_t *pBitmap = NULL;
 
     assert(pDC);
 
     //see if its in the cache.
     if(util_lru_FindCachedItem(g_gfx_Globals.pBitmapCache,&uResourceID, &hndl)== SUCCESS)
     {//found a handle, lets try to lock it.
-        pBitmap = (gfx_Bitmap_t*)util_hndl_Lock(hndl);
+        pBitmap = (gfx_Bmp_t*)util_hndl_Lock(hndl);
         if(!pBitmap)
         {//no pointer returned from lock, it must have been purged.
             util_lru_RemoveItemFromCache(g_gfx_Globals.pBitmapCache,&uResourceID, NULL);

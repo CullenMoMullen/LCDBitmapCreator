@@ -26,7 +26,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_stretchblt_Generic(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect, gfx_Rect_t *dstRect, gfx_Bitmap_t *pSrc, gfx_Rect_t *srcRect, gfx_StretchFilter_t filterType)
+void gfx_stretchblt_Generic(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect, gfx_Rect_t *dstRect, gfx_Bmp_t *pSrc, gfx_Rect_t *srcRect, gfx_StretchFilter_t filterType)
 {
 	
     gfx_Color_t cRGB;
@@ -75,12 +75,12 @@ void gfx_stretchblt_Generic(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect
 //!       the rectangle will be reduced in size to match the size of the source
 //!       rectangle.  This will also affect the scaling factor
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_stretchblt_Simple(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t ClipRect, gfx_Rect_t *dstRect, gfx_Bitmap_t *pSrc, gfx_Rect_t *srcRect, gfx_StretchFilter_t filterType)
+void gfx_stretchblt_Simple(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t ClipRect, gfx_Rect_t *dstRect, gfx_Bmp_t *pSrc, gfx_Rect_t *srcRect, gfx_StretchFilter_t filterType)
 {
     gfx_Rect_t destRect, sourceRect;
-	void (*pStretchBlt)(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect, 
+	void (*pStretchBlt)(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect, 
                         gfx_Rect_t *dstRect, 
-                        gfx_Bitmap_t *pSrc, gfx_Rect_t *srcRect, gfx_StretchFilter_t filterType);
+                        gfx_Bmp_t *pSrc, gfx_Rect_t *srcRect, gfx_StretchFilter_t filterType);
 
     //int SourceXOffset=0,SourceYOffset=0;
     
@@ -203,7 +203,7 @@ void gfx_stretchblt_Simple(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_bmp_StretchBitmapByAddr(gfx_DeviceContext_t *pDC, gfx_Rect_t *destRect, gfx_Bitmap_t *pSrc, gfx_Rect_t *srcRect, gfx_StretchFilter_t filterType){
+void gfx_bmp_StretchBitmapByAddr(gfx_DeviceContext_t *pDC, gfx_Rect_t *destRect, gfx_Bmp_t *pSrc, gfx_Rect_t *srcRect, gfx_StretchFilter_t filterType){
 	gfx_Rect_t rect;
     assert(pDC);
     assert(pSrc);
@@ -239,14 +239,14 @@ void gfx_bmp_StretchBitmapByAddr(gfx_DeviceContext_t *pDC, gfx_Rect_t *destRect,
 void gfx_bmp_StretchBitmap(gfx_DeviceContext_t *pDC, gfx_Rect_t *destRect, uint32_t uResourceID, gfx_Rect_t *srcRect, gfx_StretchFilter_t filterType)
 {
     util_Handle_t hndl;
-    gfx_Bitmap_t *pBitmap = NULL;
+    gfx_Bmp_t *pBitmap = NULL;
 
     assert(pDC);
 
     //see if its in the cache.
     if(util_lru_FindCachedItem(g_gfx_Globals.pBitmapCache,&uResourceID, &hndl)== SUCCESS)
     {//found a handle, lets try to lock it.
-        pBitmap = (gfx_Bitmap_t*)util_hndl_Lock(hndl);
+        pBitmap = (gfx_Bmp_t*)util_hndl_Lock(hndl);
         if(!pBitmap)
         {//no pointer returned from lock, it must have been purged.
             util_lru_RemoveItemFromCache(g_gfx_Globals.pBitmapCache,&uResourceID, NULL);

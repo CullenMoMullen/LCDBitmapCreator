@@ -31,13 +31,13 @@
 const gfx_BitmapFormat_t *gfx_format_GetFormat(uint8_t uFormatCode)
 {
     const gfx_BitmapFormat_t *pFormat = g_gfx_BitmapSupportTable;
-    while(pFormat->uUniqueIdentifier != BITMAP_TYPE_COUNT)
+    while(pFormat->uUniqueIdentifier != BMP_TYPE_COUNT)
     {
         if(pFormat->uUniqueIdentifier == uFormatCode)
             break;
         pFormat ++;
     }
-    if(pFormat->uUniqueIdentifier == BITMAP_TYPE_COUNT)
+    if(pFormat->uUniqueIdentifier == BMP_TYPE_COUNT)
         pFormat = NULL;
     assert(pFormat);
     return pFormat;
@@ -46,7 +46,7 @@ const gfx_BitmapFormat_t *gfx_format_GetFormat(uint8_t uFormatCode)
 ////////////////////////////////////////////////////////////////////////////////
 // For information about this function please see gfx_format.h
 ////////////////////////////////////////////////////////////////////////////////
-gfx_format_GetPixel_t    *gfx_format_GetPixel(gfx_Bitmap_t* pBmp)
+gfx_format_GetPixel_t    *gfx_format_GetPixel(gfx_Bmp_t* pBmp)
 {
     gfx_format_GetPixel_t *pGetPixel = gfx_format_GetFormat(pBmp->uType)->GetPixelFunction;
 
@@ -57,7 +57,7 @@ gfx_format_GetPixel_t    *gfx_format_GetPixel(gfx_Bitmap_t* pBmp)
 ////////////////////////////////////////////////////////////////////////////////
 // For information about this function please see gfx_format.h
 ////////////////////////////////////////////////////////////////////////////////
-gfx_format_PutPixel_t    *gfx_format_PutPixel(gfx_Bitmap_t* pBmp)
+gfx_format_PutPixel_t    *gfx_format_PutPixel(gfx_Bmp_t* pBmp)
 {
     gfx_format_PutPixel_t *pPutPixel = gfx_format_GetFormat(pBmp->uType)->PutPixelFunction;
 
@@ -79,7 +79,7 @@ gfx_format_GetDataSize_t *gfx_format_GetDataSize(uint8_t uFormatCode)
 ////////////////////////////////////////////////////////////////////////////////
 // For information about this function please see gfx_format.h
 ////////////////////////////////////////////////////////////////////////////////
-gfx_format_LineDraw_t    *gfx_format_GetLineDraw(gfx_Bitmap_t* pBmp)
+gfx_format_LineDraw_t    *gfx_format_GetLineDraw(gfx_Bmp_t* pBmp)
 {
 
     gfx_format_LineDraw_t *pLineDraw=gfx_format_GetFormat(pBmp->uType)->DrawLineFunction;
@@ -90,7 +90,7 @@ gfx_format_LineDraw_t    *gfx_format_GetLineDraw(gfx_Bitmap_t* pBmp)
 ////////////////////////////////////////////////////////////////////////////////
 // For information about this function please see gfx_format.h
 ////////////////////////////////////////////////////////////////////////////////
-gfx_format_GetBitBlt_t   *gfx_format_BitBlt(gfx_Bitmap_t*pSource, gfx_Bitmap_t*pDest)
+gfx_format_GetBitBlt_t   *gfx_format_BitBlt(gfx_Bmp_t*pSource, gfx_Bmp_t*pDest)
 {
     const gfx_format_BitBltEntry_t *pEntry = g_gfx_BitBltFunctions;
     gfx_format_GetBitBlt_t *pBitBlt = gfx_bitblt_Generic;
@@ -115,7 +115,7 @@ gfx_format_GetBitBlt_t   *gfx_format_BitBlt(gfx_Bitmap_t*pSource, gfx_Bitmap_t*p
 //! \param[in] pSource a pointer to the source bitmap.
 //! \param[in] pDest   a pointer to destination bitmap.
 //! \return a pointer to the function for 'AlphaBlend'.
-gfx_format_GetAlphaBlend_t *gfx_format_AlphaBlend(gfx_Bitmap_t*pSource, gfx_Bitmap_t*pDest){
+gfx_format_GetAlphaBlend_t *gfx_format_AlphaBlend(gfx_Bmp_t*pSource, gfx_Bmp_t*pDest){
     const gfx_format_AlphaBlendEntry_t *pEntry = g_gfx_AlphaBlendFunctions;
     gfx_format_GetAlphaBlend_t *pAlphaBlend = gfx_alphablend_Generic;
 
@@ -140,7 +140,7 @@ gfx_format_GetAlphaBlend_t *gfx_format_AlphaBlend(gfx_Bitmap_t*pSource, gfx_Bitm
 //! \param[in] pSource a pointer to the source bitmap.
 //! \param[in] pDest   a pointer to destination bitmap.
 //! \return a pointer to the function for 'StretchBlt'.
-gfx_format_GetStretchBlt_t *gfx_format_StretchBlt(gfx_Bitmap_t*pSource, gfx_Bitmap_t*pDest){
+gfx_format_GetStretchBlt_t *gfx_format_StretchBlt(gfx_Bmp_t*pSource, gfx_Bmp_t*pDest){
     const gfx_format_StretchBltEntry_t *pEntry = g_gfx_StretchBltFunctions;
     gfx_format_GetStretchBlt_t *pStretchBlt = gfx_stretchblt_Generic;
 

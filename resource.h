@@ -22,12 +22,10 @@
 #define IDC_BUTTON_OPEN                 1010
 #define IDC_SINGLE_FILE_OUT             1011
 #define IDC_STATIC_IMG_PREVIEW          1011
-#define IDC_PROGRESS_CFILE_CREATION     1012
-#define IDC_RICHEDIT_LOG_CTRL           1012
 #define IDC_BUTTON_EXPORT               1013
 #define IDC_MFCPROPERTYGRIDSELBMP       1015
-#define IDC_RICHEDI                     1024
 #define IDC_BUTTON1                     1026
+#define IDC_RICHEDIT22                  1028
 #define ID_FILE_ADDIMAES                32771
 #define ID_FILE_EXIT                    32772
 #define ID_FILE_CHOOSEFORMAT            32773
@@ -46,7 +44,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        133
 #define _APS_NEXT_COMMAND_VALUE         32794
-#define _APS_NEXT_CONTROL_VALUE         1027
+#define _APS_NEXT_CONTROL_VALUE         1029
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

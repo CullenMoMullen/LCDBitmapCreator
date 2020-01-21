@@ -4,8 +4,6 @@
 
 #pragma once
 
-class CLCDBitmapCreatorDlgAutoProxy;
-
 
 #include "MultiSelectFileList.h"
 #include "CMyStatic.h"
@@ -64,8 +62,10 @@ class CLCDBitmapCreatorDlgAutoProxy;
 
 
 
-#define LOG_ERROR_COLOR		RGB()
-#define LOG_WARNING_COLOR	RGB()
+#define LOG_ERROR_COLOR		RGB(128,0,0)
+#define LOG_WARNING_COLOR	RGB(0,128,128)
+#define LOG_INFO_COLOR		RGB(0,128,0)
+#define LOG_VERBOSE_COLOR	RGB(0,0,128)
 
 
 
@@ -77,13 +77,9 @@ class CLCDBitmapCreatorDlgAutoProxy;
 // CLCDBitmapCreatorDlg dialog
 class CLCDBitmapCreatorDlg : public CDialogEx
 {
-	DECLARE_DYNAMIC(CLCDBitmapCreatorDlg);
-	friend class CLCDBitmapCreatorDlgAutoProxy;
-
 // Construction
 public:
 	CLCDBitmapCreatorDlg(CWnd* pParent = nullptr);	// standard constructor
-	virtual ~CLCDBitmapCreatorDlg();
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -95,15 +91,16 @@ protected:
 
 // Implementation
 protected:
-	CLCDBitmapCreatorDlgAutoProxy* m_pAutoProxy;
+//	CLCDBitmapCreatorDlgAutoProxy* m_pAutoProxy;
 	HICON m_hIcon;
 
-	BOOL CanExit();
+//	BOOL CanExit();
 
-	int AppendToLog(CString str, COLORREF color);
-	int AppendToLogAndScroll(CString str, COLORREF color);
+	int AppendToLog(CString str, COLORREF colorFG, COLORREF colorBG);
+	int AppendToLogAndScroll(CString str, COLORREF color, COLORREF colorBG);
 	int GetNumVisibleLines(CRichEditCtrl* pCtrl);
 
+	CRichEditCtrl m_ctrlLog;
 	CMyStatic BitmapCtrl;
 	CMFCPropertyGridCtrl selectBmpPropGrid;
 	CListCtrl FilesToGenerateListCtrl;
@@ -111,8 +108,8 @@ protected:
 	CImage CurrentImg;
 	BOOL includedAlready = false;
 
-	bool WriteBitmapToCFile(CString& InputFilename, CString& OutputFilename, CString& ArrayName, gfx_Bitmap_t* pBitmap, bool bAddBitmapHeader, bool bConst, bool singleOutputFile = false);
-	bool LoadBitmapFromFile(CString& inputFile, gfx_BitmapTypeEnum_t eOutputBitmapType, gfx_Bitmap_t** pBitmap);
+	bool WriteBitmapToCFile(CString& InputFilename, CString& OutputFilename, CString& ArrayName, gfx_Bmp_t* pBitmap, bool bAddBitmapHeader, bool bConst, bool singleOutputFile = false);
+	bool LoadBitmapFromFile(CString& inputFile, gfx_BitmapTypeEnum_t eOutputBitmapType, gfx_Bmp_t** pBitmap);
 
 	CBitmapCreatorProperties props;
 	CSimpleMap<CString, gfx_BitmapTypeEnum_t> bmpTypesMap;
@@ -156,9 +153,12 @@ protected:
 	afx_msg LRESULT OnAfxWmPropertyChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 public:
-	CRichEditCtrl m_ctrlLog;
+	//CRichEditCtrlEx m_ctl_RichEdit;
+
+
 	afx_msg void OnBnClickedButtonOpen();
 	afx_msg void OnBnClickedButtonExport();
 
 	afx_msg void OnBnClickedCancel();
+
 };

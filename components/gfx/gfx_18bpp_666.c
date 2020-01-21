@@ -19,8 +19,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_bitblit_18BPP_666(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_t Rect,
-                           gfx_Bitmap_t *pSrc, int SourceXoffset, int SourceYoffset)
+void gfx_bitblit_18BPP_666(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, gfx_Rect_t Rect,
+                           gfx_Bmp_t *pSrc, int SourceXoffset, int SourceYoffset)
 {
     int y;
     unsigned char *pSourceOrigin;
@@ -49,7 +49,7 @@ void gfx_bitblit_18BPP_666(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, gfx_Rect_
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_PutPixel_18BPP_666(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap, uint16_t u16x, uint16_t u16y, gfx_Color_t cRGB)
+void gfx_PutPixel_18BPP_666(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap, uint16_t u16x, uint16_t u16y, gfx_Color_t cRGB)
 {
     unsigned char *pData;
     uint8_t alphaValue = GET_ALPHA(cRGB);
@@ -85,7 +85,7 @@ void gfx_PutPixel_18BPP_666(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap, uint16
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_GetPixel_18BPP_666(gfx_Color_t *pPalette, gfx_Bitmap_t *pBitmap, uint16_t x, uint16_t y, gfx_Color_t *pRGB)
+void gfx_GetPixel_18BPP_666(gfx_Color_t *pPalette, gfx_Bmp_t *pBitmap, uint16_t x, uint16_t y, gfx_Color_t *pRGB)
 {
     unsigned char *pData;
     gfx_Color_t uPixel;
@@ -107,7 +107,7 @@ uint32_t gfx_GetDataSize_18BPP_666(uint16_t u16x, uint16_t u16y)
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_DrawClippedLine_18BPP_666(gfx_Color_t *pPalette, gfx_Bitmap_t *pDest, int x0, int y0, int x1, int y1, gfx_Color_t color)
+void gfx_DrawClippedLine_18BPP_666(gfx_Color_t *pPalette, gfx_Bmp_t *pDest, int x0, int y0, int x1, int y1, gfx_Color_t color)
 {
     uint32_t u32Stride;
     uint8_t *pData;
