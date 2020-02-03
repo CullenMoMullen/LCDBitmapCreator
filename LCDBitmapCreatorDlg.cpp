@@ -130,7 +130,7 @@ BOOL CLCDBitmapCreatorDlg::OnInitDialog()
 	FilesToGenerateListCtrl.InsertColumn(0, TEXT("Images to convert"), 0, rect.right - rect.left);
 
 	//Pasting into the edit control allows us to see color properly.
-	AppendToLog(TEXT("Application Started\nPress + button to choose files to convert\r\n"), LOG_INFO_COLOR, RGB(0xFF,0xFF,0xFF));
+	//AppendToLog(TEXT("Application Started\nPress + button to choose files to convert\r\n"), LOG_INFO_COLOR, RGB(0xFF,0xFF,0xFF));
 	AppendToLogAndScroll(TEXT("Application Started\nPress + button to choose files to convert\r\n"), LOG_INFO_COLOR, RGB(0xFF, 0xFF, 0xFF));
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }

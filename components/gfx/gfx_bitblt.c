@@ -31,7 +31,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_bmp_RotateBitmap(gfx_Color_t *pPalette, gfx_Bmp_t * pSrc, gfx_Bmp_t * pDest, gfx_OrientationEnum_t eOrientation)
+void gfx_bmp_RotateBitmap(gfx_Color_t *pPalette, gfx_Bmp_t* pSrc, gfx_Bmp_t* pDest, gfx_OrientationEnum_t eOrientation)
 {
     gfx_Color_t cRGB;
     unsigned int x, y;
@@ -85,7 +85,7 @@ void gfx_bmp_RotateBitmap(gfx_Color_t *pPalette, gfx_Bmp_t * pSrc, gfx_Bmp_t * p
 gfx_Bmp_t*gfx_bmp_CreateBitmap(unsigned char uBitmapTypeIdentifier, uint16_t uWidth, uint16_t uHeight)
 {
     gfx_format_GetDataSize_t *pGetDataSize;
-    gfx_Bmp_t*pBmp = NULL;
+    gfx_Bmp_t* pBmp = NULL;
     uint32_t uSize;
     pGetDataSize = gfx_format_GetDataSize(uBitmapTypeIdentifier);
     uSize = sizeof(gfx_Bmp_t) + pGetDataSize (uWidth,uHeight);
@@ -103,7 +103,7 @@ gfx_Bmp_t*gfx_bmp_CreateBitmap(unsigned char uBitmapTypeIdentifier, uint16_t uWi
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx.h.
 ////////////////////////////////////////////////////////////////////////////////
-bool gfx_bmp_GetPixel(gfx_Color_t *pPalette, gfx_Bmp_t*pSrc, int x , int y, gfx_Color_t *pRGB)
+bool gfx_bmp_GetPixel(gfx_Color_t *pPalette, gfx_Bmp_t* pSrc, int x , int y, gfx_Color_t *pRGB)
 {
     if(x <(int)pSrc->uWidth && y < (int)pSrc->uHeight)
     {
@@ -118,7 +118,7 @@ bool gfx_bmp_GetPixel(gfx_Color_t *pPalette, gfx_Bmp_t*pSrc, int x , int y, gfx_
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx.h.
 ////////////////////////////////////////////////////////////////////////////////
-bool gfx_bmp_PutPixel(gfx_Color_t *pPalette, gfx_Bmp_t*pDest, int x , int y, gfx_Color_t cRGB)
+bool gfx_bmp_PutPixel(gfx_Color_t *pPalette, gfx_Bmp_t* pDest, int x , int y, gfx_Color_t cRGB)
 {
     if(x <(int)pDest->uWidth && y < (int)pDest->uHeight)
     {
@@ -133,7 +133,7 @@ bool gfx_bmp_PutPixel(gfx_Color_t *pPalette, gfx_Bmp_t*pDest, int x , int y, gfx
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx_format.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_bitblt_Generic(gfx_Color_t *pPalette, gfx_Bmp_t*pDest, gfx_Rect_t Rect, gfx_Bmp_t*pSrc, int SourceXoffset, int SourceYoffset)
+void gfx_bitblt_Generic(gfx_Color_t *pPalette, gfx_Bmp_t* pDest, gfx_Rect_t Rect, gfx_Bmp_t* pSrc, int SourceXoffset, int SourceYoffset)
 {
     gfx_Color_t cRGB;
     int x, y;
@@ -180,9 +180,9 @@ void gfx_bitblt_Generic(gfx_Color_t *pPalette, gfx_Bmp_t*pDest, gfx_Rect_t Rect,
 //!                                     to draw the source bitmap.
 //! \note This function is an internal function and (probably) should not be called from the outside.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_bitblt_Simple(gfx_Color_t *pPalette, gfx_Bmp_t*pDest, gfx_Rect_t ClipRect, int x, int y, gfx_Bmp_t* pSrc)
+void gfx_bitblt_Simple(gfx_Color_t *pPalette, gfx_Bmp_t* pDest, gfx_Rect_t ClipRect, int x, int y, gfx_Bmp_t* pSrc)
 {
-    void (*pBitBlt)(gfx_Color_t *pPalette, gfx_Bmp_t*,gfx_Rect_t, gfx_Bmp_t*,int,int);
+    void (*pBitBlt)(gfx_Color_t *pPalette, gfx_Bmp_t*, gfx_Rect_t, gfx_Bmp_t*, int, int);
     int SourceXOffset=0,SourceYOffset=0;
     //four easy early escapes because destination coordinates are
     //entirely outside of the destination rect
@@ -271,7 +271,7 @@ void gfx_bitblt_Simple(gfx_Color_t *pPalette, gfx_Bmp_t*pDest, gfx_Rect_t ClipRe
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx.h.
 ////////////////////////////////////////////////////////////////////////////////
-void gfx_bmp_DrawBitmapByAddr(gfx_DeviceContext_t *pDC, gfx_Bmp_t*pSrc, int x, int y )
+void gfx_bmp_DrawBitmapByAddr(gfx_DeviceContext_t *pDC, gfx_Bmp_t *pSrc, int x, int y )
 {
     assert(pDC);
     assert(pSrc);
@@ -301,10 +301,10 @@ void gfx_bmp_DeleteBitmap(gfx_Bmp_t* pBitmap)
 ////////////////////////////////////////////////////////////////////////////////
 // To view the documentation for this function, refer to gfx.h.
 ////////////////////////////////////////////////////////////////////////////////
-gfx_Bmp_t*gfx_rsrc_LoadBitmap(uint32_t uResourceID, util_Handle_t *pHndl)
+gfx_Bmp_t* gfx_rsrc_LoadBitmap(uint32_t uResourceID, util_Handle_t *pHndl)
 {
     util_Handle_t hndl=INVALID_HANDLE;
-    gfx_Bmp_t*pBitmap = NULL;
+    gfx_Bmp_t* pBitmap = NULL;
     uint32_t u32Size;
 
     int32_t iFileHandle = os_resource_Open(uResourceID,&u32Size,NULL);
@@ -315,7 +315,7 @@ gfx_Bmp_t*gfx_rsrc_LoadBitmap(uint32_t uResourceID, util_Handle_t *pHndl)
     if(hndl) {
     int32_t  iRetValue;
 
-    pBitmap = (gfx_Bmp_t*)util_hndl_Lock(hndl);
+    pBitmap = (gfx_Bmp_t*) util_hndl_Lock(hndl);
     iRetValue = Fread(iFileHandle,(uint8_t *) pBitmap,u32Size);
 
     assert(iRetValue == u32Size);
@@ -362,7 +362,7 @@ static void gfx_bmp_DrawLargeBitmap(int FileHandle, uint32_t size,
 
     length -= (length % stride);
 
-    pBitmap = (gfx_Bmp_t*)util_hndl_AllocLocked(length + sizeof(gfx_Bmp_t), false);
+    pBitmap = (gfx_Bmp_t*) util_hndl_AllocLocked(length + sizeof(gfx_Bmp_t), false);
     if (pBitmap == NULL) return;
 
     /* Copy off uType, uWidth, and uHeight */
@@ -404,7 +404,7 @@ static void gfx_bmp_DrawSmallBitmap(int FileHandle, uint32_t size,
         return;
     }
 
-    pBitmap = (gfx_Bmp_t*)util_hndl_Lock(handle);
+    pBitmap = (gfx_Bmp_t*) util_hndl_Lock(handle);
     if (pBitmap == NULL) {
     util_hndl_Free(handle);
     return;
@@ -441,46 +441,51 @@ void gfx_bmp_DrawBitmap(gfx_DeviceContext_t *pDC,
             int x0, int y0)
 {
     util_Handle_t hndl;
-    gfx_Bmp_t*pBitmap = NULL;
+    gfx_Bmp_t* pBitmap = NULL;
 
     assert(pDC);
 
     //see if its in the cache.
-    if (util_lru_FindCachedItem(g_gfx_Globals.pBitmapCache,
-                &uResourceID,
-                &hndl) == SUCCESS) {
-    //found a handle, lets try to lock it.
-        pBitmap = (gfx_Bmp_t*)util_hndl_Lock(hndl);
+    if (SUCCESS == util_lru_FindCachedItem(g_gfx_Globals.pBitmapCache,
+                                           &uResourceID, &hndl)) 
+    {
+        //found a handle, lets try to lock it.
+        pBitmap = (gfx_Bmp_t*) util_hndl_Lock(hndl);
 
         if (!pBitmap) {
-        //no pointer returned from lock, it must have been purged.
+            //no pointer returned from lock, it must have been purged.
             util_lru_RemoveItemFromCache(g_gfx_Globals.pBitmapCache,
                      &uResourceID,
                      NULL);
-    }//if
+        }//if
     }//if
 
     if (pBitmap) {
-    gfx_bmp_DrawBitmapByAddr(pDC, pBitmap, x0, y0);
+        gfx_bmp_DrawBitmapByAddr(pDC, pBitmap, x0, y0);
 
-    if (hndl) util_hndl_Unlock(hndl);
+        if (hndl) {
+            util_hndl_Unlock(hndl); 
+        }
+    
     } else {
-    int FileHandle;
-    uint32_t size;
+        int FileHandle;
+        uint32_t size;
 
-    FileHandle = os_resource_Open(uResourceID, &size, NULL);
-    if (FileHandle < 0) return;
+        FileHandle = os_resource_Open(uResourceID, &size, NULL);
+        
+        if (FileHandle < 0) return;
 
-    if (size < MAX_BITMAP_SZ)
-        gfx_bmp_DrawSmallBitmap(FileHandle, size,
-                    pDC, uResourceID,
-                    x0, y0);
-    else
-        gfx_bmp_DrawLargeBitmap(FileHandle, size,
-                    pDC, uResourceID,
-                    x0, y0);
-
-    Fclose(FileHandle);
+        if (size < MAX_BITMAP_SZ) {
+            gfx_bmp_DrawSmallBitmap(FileHandle, size,
+                pDC, uResourceID,
+                x0, y0);
+        }
+        else {
+            gfx_bmp_DrawLargeBitmap(FileHandle, size,
+                pDC, uResourceID,
+                x0, y0);
+        }
+        Fclose(FileHandle);
     }//if
 }//gfx_bmp_DrawBitmap
 

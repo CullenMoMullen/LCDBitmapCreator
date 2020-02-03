@@ -222,6 +222,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CBitmapCreatorProperties.h" />
+    <ClInclude Include="components\gfx\gfx.h" />
+    <ClInclude Include="components\gfx\gfx_format.h" />
+    <ClInclude Include="components\gfx\gfx_internal.h" />
+    <ClInclude Include="components\gfx\gfx_rsrcfont.h" />
+    <ClInclude Include="components\handlealloc\handlealloc.h" />
+    <ClInclude Include="components\lru\lru.h" />
+    <ClInclude Include="components\lru\lru_errordefs.h" />
+    <ClInclude Include="components\middleware_errordefs.h" />
+    <ClInclude Include="components\middleware_subgroups.h" />
+    <ClInclude Include="components\runtime\runtime.h" />
+    <ClInclude Include="drivers\ddi_errordefs.h" />
+    <ClInclude Include="drivers\ddi_subgroups.h" />
+    <ClInclude Include="drivers\media\ddi_media.h" />
+    <ClInclude Include="drivers\media\ddi_media_errordefs.h" />
+    <ClInclude Include="drivers\media\drive_tags.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="groups.h" />
     <ClInclude Include="LCDBitmapCreator.h" />

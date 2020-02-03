@@ -44,7 +44,7 @@ BOOL CLCDBitmapCreatorApp::InitInstance()
 	InitCtrls.dwSize = sizeof(InitCtrls);
 	// Set this to include all the common control classes you want to use
 	// in your application.
-	InitCtrls.dwICC = ICC_WIN95_CLASSES|ICC_UPDOWN_CLASS;
+	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
 	CWinApp::InitInstance();
@@ -58,8 +58,8 @@ BOOL CLCDBitmapCreatorApp::InitInstance()
 	CShellManager *pShellManager = new CShellManager();
 
 	// Activate "Windows Native" visual manager for enabling themes in MFC controls
-	CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
-
+	CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
+	
 	// Standard initialization
 	// If you are not using these features and wish to reduce the size
 	// of your final executable, you should remove from the following
