@@ -8,6 +8,7 @@
 #define IDD_LCDBITMAPCREATOR_DIALOG     102
 #define IDR_MAINFRAME                   128
 #define IDR_MENU1                       131
+#define IDR_MENU2                       133
 #define IDC_STATIC_BMP_SETTINGS_GROUP   1000
 #define IDC_STATIC_WIDTH                1001
 #define IDC_STATIC_HEIGHT               1002
@@ -37,14 +38,19 @@
 #define ID_CHOOSEFORMAT                 32787
 #define ID_CHOOSEFORMAT_1BPP_IDEAL      32788
 #define ID_CHOOSEFORMAT_1BPP_VERTICAL   32789
+#define ID_FILE_EXIT32794               32794
+#define ID_OUTPUTOPTIONS_SINGLECFILE    32795
+#define ID_OUTPUTOPTIONS_OUTPUTFORMAT   32796
+#define ID_OUTPUTFORMAT_1BPP            32797
+#define ID_OUTPUTFORMAT_1BPP32798       32798
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        133
-#define _APS_NEXT_COMMAND_VALUE         32794
-#define _APS_NEXT_CONTROL_VALUE         1029
+#define _APS_NEXT_RESOURCE_VALUE        134
+#define _APS_NEXT_COMMAND_VALUE         32799
+#define _APS_NEXT_CONTROL_VALUE         1030
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

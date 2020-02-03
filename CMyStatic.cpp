@@ -28,48 +28,89 @@ void CMyStatic::DrawItem(LPDRAWITEMSTRUCT pdi)
 {
 
 	// TODO:  Add your code to draw the specified item
-	CDC* pDC = CDC::FromHandle(pdi->hDC);
+	HDC dc = pdi->hDC;
+	CDC* pDC = CDC::FromHandle(dc);
 	if (!CurrentImg.IsNull()) {
 		
 		
 		HBITMAP hbmp = HBITMAP(CurrentImg);
-
-		HDC    dcMem = ::CreateCompatibleDC(pdi->hDC);
+		
+		HDC    dcMem = ::CreateCompatibleDC(dc);
 		HBITMAP hOld = (HBITMAP)::SelectObject(dcMem, hbmp);
 
 		BITMAP bitmap = { 0 };
 		::GetObject(hbmp, sizeof(BITMAP), &bitmap);
-		//::BitBlt(pdi->hDC, 0, 0, bitmap.bmWidth, bitmap.bmHeight, dcMem, 0, 0, SRCCOPY);
-		int destWidth = pdi->rcItem.right - pdi->rcItem.left;
-		int destHeight = pdi->rcItem.bottom - pdi->rcItem.top;
-		int sourceWidth = bitmap.bmWidth;
-		int sourceHeight = bitmap.bmHeight;
-
-
-
-
-		int s = max(sourceWidth, sourceHeight);
-		int w = destWidth * sourceWidth / s;
-		int h = destHeight * sourceHeight / s;
-		int x = (destWidth - w) / 2;
-		int y = (destHeight - h) / 2;
 
 		RECT clRect{ 0 };
 		this->GetClientRect(&clRect);
-		HBRUSH br =  ::CreateSolidBrush(RGB(0x33, 0x33, 0x33));
-		HBRUSH oldbr = (HBRUSH) ::SelectObject(pdi->hDC, br);
-		::FillRect(pdi->hDC, &clRect, br);
-		::SelectObject(pdi->hDC, oldbr);
 		
+		//::BitBlt(pdi->hDC, 0, 0, bitmap.bmWidth, bitmap.bmHeight, dcMem, 0, 0, SRCCOPY);
+		int destWidth = clRect.right - clRect.left;
+		int destHeight = clRect.bottom - clRect.top;
+		int sourceWidth = bitmap.bmWidth;
+		int sourceHeight = bitmap.bmHeight;
+
+		int maxDimension = max(sourceWidth, sourceHeight);
+		int stretchWidth = destWidth * sourceWidth / maxDimension;
+		int stretchHeight = destHeight * sourceHeight / maxDimension;
+		int centerX = (destWidth - stretchWidth) / 2;
+		int centerY = (destHeight - stretchHeight) / 2;
+
+		HBRUSH oobBrush = ::CreateSolidBrush(GetSysColor(COLOR_INFOBK));
+		HBRUSH oldbr = (HBRUSH) ::SelectObject(dc, oobBrush);
+
+		RECT oobRect = { 0 };
+		if (centerX > 0) {
+			oobRect.top = 0;
+			oobRect.left = 0;
+			oobRect.bottom = clRect.bottom;
+			oobRect.right = centerX;
+			::FillRect(dc, &oobRect, oobBrush);
+			oobRect.left = centerX + stretchWidth;
+			oobRect.right = clRect.right;
+			::FillRect(dc, &oobRect, oobBrush);
+		}
+		if (centerY > 0) {
+			oobRect.top = 0;
+			oobRect.left = 0;
+			oobRect.bottom = centerY;
+			oobRect.right = clRect.right;
+			::FillRect(dc, &oobRect, oobBrush);
+			oobRect.top = centerY + stretchHeight;
+			oobRect.bottom = clRect.bottom;
+			::FillRect(dc, &oobRect, oobBrush);
+		}
+
+		HBRUSH br = ::CreateSolidBrush(RGB(0xFF, 0xFF, 0xFF));
+		clRect.top = centerY;
+		clRect.left = centerX;
+		clRect.bottom = centerY + stretchHeight;
+		clRect.right = centerX + stretchWidth;
+		::SelectObject(dc, br);
+		::DeleteObject(oobBrush);
+		::FillRect(dc, &clRect, br);
+		::SelectObject(dc, oldbr);
 		
-		::SetStretchBltMode(pdi->hDC, STRETCH_DELETESCANS);
-		::StretchBlt(pdi->hDC, x, y, w, h, dcMem, 0, 0, sourceWidth, sourceHeight, SRCCOPY);
-		//HPEN pn = ::CreatePen(PS_DASH, 1, RGB(100, 0, 0));
-		//::SelectObject(pdi->hDC, pn);
-		//::(pdi->hDC, 0, 8);
-		//::LineTo(pdi->hDC, w - 1, 8);
-		//::MoveTo(pdi->hDC, 0, 16);
-		//::LineTo(pdi->hDC, w - 1, 16);
+		::SetStretchBltMode(dc, STRETCH_DELETESCANS);
+		::StretchBlt(dc, centerX, centerY, stretchWidth, stretchHeight, dcMem, 0, 0, sourceWidth, sourceHeight, SRCCOPY);
+		
+		/*
+		HPEN pn = ::CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
+		HPEN oldPen = (HPEN) ::SelectObject(dc, pn);
+		
+		for (int i = 0; i < stretchHeight; i+= ((stretchHeight-1)/sourceHeight)) {
+			::MoveToEx(dc, centerX, centerY+i, NULL);
+			::LineTo(dc,centerX+stretchWidth,centerY+i);
+		}
+		for (int i = 0; i < stretchWidth; i+= ((stretchWidth-1)/sourceWidth)) {
+			::MoveToEx(dc, centerX+i, centerY, NULL);
+			::LineTo(dc, centerX+i, centerY+stretchHeight);
+		}
+		
+		::SelectObject(dc, oldPen);
+		::DeleteObject(pn);
+		*/
+
 		::SelectObject(dcMem, hOld);
 		::DeleteObject(br);
 		::ReleaseDC(HWND(pDC->GetWindow()), dcMem);
@@ -78,10 +119,10 @@ void CMyStatic::DrawItem(LPDRAWITEMSTRUCT pdi)
 	else {
 		RECT clRect{ 0 };
 		this->GetClientRect(&clRect);
-		HBRUSH br = ::CreateSolidBrush(D3DCOLOR_RGBA(10,50,200,125));
-		HBRUSH oldbr = (HBRUSH) ::SelectObject(pdi->hDC, br);
-		::FillRect(pdi->hDC, &clRect, br);
-		::SelectObject(pdi->hDC, oldbr);
+		HBRUSH br = ::CreateSolidBrush(D3DCOLOR_RGBA(192,192,192,125));
+		HBRUSH oldbr = (HBRUSH) ::SelectObject(dc, br);
+		::FillRect(dc, &clRect, br);
+		::SelectObject(dc, oldbr);
 		::DeleteObject(br);
 	}
 }
